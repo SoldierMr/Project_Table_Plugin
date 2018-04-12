@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/qd_table.min.css">
+    <script src="./js/qd_table.min.js"></script>
+    <script src='./js/contextMenu.min.js'></script>
+</head>
+<body>
+    <object id="qdutils" type="application/plugin-QdUtils.dll" style="width:0;height:0; position:absolute; top:-100px;"></object>
+    <div style="overflow: auto; height: 100%;"><table id="table1"></table></div>
+</body>
+
+<script>
+	var path = qdutils.GetQuickDrawPath () + 'QdCloud\\Door\\掩门配置表\\';
+	var name_path = path + '掩门参数.cfg';
+    var door_path = path + '门类型.cfg';
+    var handle_path = path + '拉手.cfg';
+    var accessory_path = path + '五金配件分类.cfg';
+    var hk_path = path + '中横框参数.cfg';
+    var doorcore_path = path + '门芯类型.cfg';
+    var hinge_path = path + '门铰分类.cfg';
+
+	var data = qdutils.ReadStringFromFile(name_path);
+    var doorData = qdutils.ReadStringFromFile(door_path);
+    var handleData = qdutils.ReadStringFromFile(handle_path);
+    var accessoryData = qdutils.ReadStringFromFile(accessory_path);
+    var hkData = qdutils.ReadStringFromFile(hk_path);
+    var doorCoreData = qdutils.ReadStringFromFile(doorcore_path);
+    var hingeData = qdutils.ReadStringFromFile(hinge_path);
+
+    var dataSource = (data == '') ? [] : JSON.parse(data);
+    var doorDataSource = (doorData == '') ? [] : JSON.parse(doorData);
+    var handleDataSource = (handleData == '') ? [] : JSON.parse(handleData);
+    var accessoryDataSource = (accessoryData == '') ? [] : JSON.parse(accessoryData);
+    var hkDataSource = (hkData == '') ? [] : JSON.parse(hkData);
+    var doorCoreDataSource = (doorCoreData == '') ? [] : JSON.parse(doorCoreData);
+    var hingeDataSource = (hingeData == '') ? [] : JSON.parse(hingeData);
+
+    var booleanArr = ['TRUE','FALSE'];
+    var directArr = ['横纹','斜纹','竖纹'];
+    var wjDataItem = ['板材','五金','型材五金'];
+    var openWayArr = ['左','右','上','下'];
+    var doorDataItem = [],
+        hkDataItem = [],
+        doorCoreDataItem = [],
+        accessoryDataItem = [],
+        hingeDataItem = [],
+        handleDataItem = [];
+    doorDataItem      = loopInp(doorDataSource,doorDataItem);
+    handleDataItem    = loopInp(handleDataSource,handleDataItem);
+    accessoryDataItem = loopInp(accessoryDataSource,accessoryDataItem);
+    hkDataItem        = loopInp(hkDataSource,hkDataItem);
+    doorCoreDataItem  = loopInp(doorCoreDataSource,doorCoreDataItem);
+    hingeDataItem     = loopInp(hingeDataSource,hingeDataItem);
+    var dataStr;
+	dataSource.forEach(function (data) {
+        if(data.name === undefined) data.name = '';
+        if(data.doorstype === undefined) data.doorstype = '';
+        if(data.cap === undefined) data.cap = '';
+        if(data.eb_cap === undefined) data.eb_cap = '';
+        if(data.handle === undefined) data.handle = '';
+        if(data.wjname === undefined) data.wjname = '';
+        if(data.hboxname === undefined) data.hboxname = '';
+        if(data.paneltype === undefined) data.paneltype = '';
+        if(data.vboxname === undefined) data.vboxname = '';
+        if(data.vboxcode === undefined) data.vboxcode = '';
+        if(data.vboxl === undefined) data.vboxl = '';
+        if(data.vboxh === undefined) data.vboxh = '';
+        if(data.vthick === undefined) data.vthick = '';
+        if(data.udboxname === undefined) data.udboxname = '';
+        if(data.udboxcode === undefined) data.udboxcode = '';
+        if(data.udboxl === undefined) data.udboxl = '';
+        if(data.udboxh === undefined) data.udboxh = '';
+        if(data.udthick === undefined) data.udthick = '';
+        if(data.vboxjtw === undefined) data.vboxjtw = '';
+        if(data.udboxjtw === undefined) data.udboxjtw = '';
+        if(data.hboxjtw === undefined) data.hboxjtw = '';
+        if(data.d3name === undefined) data.d3name = '';
+        if(data['开门方向'] === undefined) data['开门方向'] = '';
+        if(data['颜色'] === undefined) data['颜色'] = '';
+        if(data['门铰分类'] === undefined) data['门铰分类'] = '';
+        if(data.groupname === undefined) data.groupname = '';
+        if(data['门芯颜色'] === undefined) data['门芯颜色'] = '';
+        if(data['中横颜色'] === undefined) data['中横颜色'] = '';
+
+        if(data.udholepos === undefined) data.udholepos = '0';
+
+        if(data.hbox3d === undefined) data.hbox3d = '';
+        if(data.ubox3d === undefined) data.ubox3d = '';
+        if(data.dbox3d === undefined) data.dbox3d = '';
+        if(data.bomtype === undefined) data.bomtype = '';
+        if(data.cpm_lmax === undefined) data.cpm_lmax = '';
+        if(data.cpm_hmax === undefined) data.cpm_hmax = '';
+        if(data.vdirect === undefined) data.vdirect = '';
+        if(data.vfbstr === undefined) data.vfbstr = '';
+        if(data.uddirect === undefined) data.uddirect = '';
+        if(data.udfbstr === undefined) data.udfbstr = '';
+        if(data.vmemo === undefined) data.vmemo = '';
+        if(data.udmemo === undefined) data.udmemo = '';
+        data.iscalc_framebom = (data.iscalc_framebom === undefined) ? 'FALSE' : data.iscalc_framebom;
+        if(data['iscalc_framebom']!= undefined && data.hasOwnProperty('iscalc_framebom')) {
+            if(data['iscalc_framebom'] == 0) {
+                data['iscalc_framebom'] = 'FALSE';
+            }else if(data['iscalc_framebom']!=0 && data['iscalc_framebom']!='FALSE'){
+                data['iscalc_framebom'] = 'TRUE';
+            }
+        }
+        if(data.fbstr === undefined) data.fbstr = '';
+        if(data.frame_valueh === undefined) data.frame_valueh = '';
+        if(data.frame_valuel === undefined) data.frame_valuel = '';
+        if(data.udbox_hbox_value === undefined) data.udbox_hbox_value = '';
+        data.is_xq = data.is_xq === undefined ? 'FALSE' : data.is_xq;
+        if(data['is_xq']!= undefined && data.hasOwnProperty('is_xq')) {
+            if(data['is_xq'] == 0) {
+                data['is_xq'] = 'FALSE';
+            }else if(data['is_xq']!=0 && data['is_xq']!='FALSE'){
+                data['is_xq'] = 'TRUE';
+            }
+        }
+        if(data.cb_yyvalue === undefined) data.cb_yyvalue = '';
+        if(data.bdfile === undefined) data.bdfile = '';
+        if(data.l_bdfile === undefined) data.l_bdfile = '';
+        if(data.r_bdfile === undefined) data.r_bdfile = '';
+        if(data.u_bdfile === undefined) data.u_bdfile = '';
+        if(data.d_bdfile === undefined) data.d_bdfile = '';
+        data.is_buy = (data.is_buy === undefined) ? 'FALSE' : data.is_buy;
+        if(data['is_buy']!= undefined && data.hasOwnProperty('is_buy')) {
+            if(data['is_buy'] == 0) {
+                data['is_buy'] = 'FALSE';
+            }else if(data['is_buy']!=0 && data['is_buy']!='FALSE'){
+                data['is_buy'] = 'TRUE';
+            }
+        }
+        if(data.left_doorxml === undefined) data.left_doorxml = '';
+        if(data.right_doorxml === undefined) data.right_doorxml = '';
+        if(data.doorxml === undefined) data.doorxml = '';
+        data.noframe_bom = (data.noframe_bom === undefined) ? 'FALSE' : data.noframe_bom;
+        if(data['noframe_bom']!= undefined && data.hasOwnProperty('noframe_bom')) {
+            if(data['noframe_bom'] == 0) {
+                data['noframe_bom'] = 'FALSE';
+            }else if(data['noframe_bom']!=0 && data['noframe_bom']!='FALSE'){
+                data['noframe_bom'] = 'TRUE';
+            }
+        }
+    });
+    if(dataSource.length == 0) {
+        var dataObj = {
+                name:'',
+                doorstype:'',
+                cap:'',
+                handle:'',
+                wjname:'',
+                hboxname:'',
+                paneltype:'',
+                d3name:'',
+                bomtype:'',
+                cpm_lmax:'',
+                cpm_hmax:'',
+                is_xq:'',
+                开门方向:'',
+                颜色:'',
+                中横颜色:'',
+                门芯颜色:'',
+                门铰分类:'',
+                groupname:'',
+                cb_yyvalue: '',
+                is_buy:'',
+                eb_cap:'',
+                vboxl:'',
+                vboxh:'',
+                vboxname:'',
+                vthick:'',
+                hbox3d:'',
+                vdirect:'',
+                vfbstr:'',
+                vmemo:'',
+                udboxl:'',
+                udboxh:'',
+                udboxname:'',
+                udthick:'',
+                ubox3d:'',
+                dbox3d:'',
+                uddirect:'',
+                udfbstr:'',
+                udmemo:'',
+                udholepos:'',
+                udbox_hbox_value:'',
+                vboxjtw:'',
+                udboxjtw:'',
+                hboxjtw:'',
+                iscalc_framebom:'',
+                fbstr:'',
+                frame_valuel:'',
+                frame_valueh:'',
+                bdfile:'',
+                l_bdfile:'',
+                r_bdfile:'',
+                u_bdfile:'',
+                d_bdfile:'',
+                left_doorxml:'',
+                right_doorxml:'',
+                doorxml:'',
+                noframe_bom:''
+            };
+        dataSource.push(dataObj)
+    }
+    var testData = {
+        rewriteTableTitle:{
+            dataSource:{
+                name:'名称',
+                doorstype:'门类型',
+                cap:'门缝宽度',
+                开门方向:'开门方向',
+                handle:'默认拉手',
+                wjname:'配件',
+                门铰分类:'默认门铰分类',
+                groupname:'分组',
+                颜色:'默认颜色',
+                hboxname:'默认中横框',
+                中横颜色:'默认中横框颜色',
+                paneltype:'默认门芯',
+                门芯颜色:'默认门芯颜色',
+                d3name:'3D图形',
+                bomtype:'物料分类',
+                cpm_lmax:'单门LMAX',
+                cpm_hmax:'单门HMAX',
+                is_xq:'是否斜切框',
+                cb_yyvalue: '层板内进值',
+                is_buy:'是否外购',
+                eb_cap:'内嵌门缝宽度',
+                vboxl:'竖框高度(公式)',
+                vboxh:'竖框宽度(公式)',
+                vboxname:'竖框名称',
+                vthick:'竖框壁厚',
+                hbox3d:'竖框3D图形',
+                vdirect:'纹路',
+                vfbstr:'封边信息',
+                vmemo:'竖框备注',
+                udboxl:'上下横框宽度(公式)',
+                udboxh:'上下横框高度(数值)',
+                udholepos:'上下横框打孔位偏移',
+                udboxname:'横框名称',
+                udthick:'横框壁厚',
+                ubox3d:'上横框3D图形',
+                dbox3d:'下横框3D图形',
+                uddirect:'纹路',
+                udfbstr:'封边信息',
+                udmemo:'上下横备注',
+                udbox_hbox_value:'中横框减量',
+                vboxjtw:'竖框胶条位',
+                udboxjtw:'上下横框胶条位',
+                hboxjtw:'中横框胶条位',
+                iscalc_framebom:'计算拆分边框',
+                fbstr:'封边信息',
+                frame_valuel:'宽度减量',
+                frame_valueh:'高度减量',
+                bdfile:'门框BD',
+                l_bdfile:'左竖框BD',
+                r_bdfile:'右竖框BD',
+                u_bdfile:'上横框BD',
+                d_bdfile:'下横框BD',
+                left_doorxml:'左门XML',
+                right_doorxml:'右门XML',
+                doorxml:'单门XML',
+                noframe_bom:'不计算门框物料'
+            },
+
+            diyTitleData:[
+                {
+                    name:'',
+                    children:[
+                        {name:'名称',attrName:'name',width:70},
+                        {name:'门类型',attrName:'doorstype',width:70},
+                        {name:'门缝宽度',attrName:'cap',width:70},
+                        {name:'开门方向',attrName:'开门方向',width:70},
+                        {name:'默认拉手',attrName:'handle',width:70},
+                        {name:'配件',attrName:'wjname',width:70},
+                        {name:'默认门铰分类',attrName:'门铰分类',width:70},
+                        {name:'分组',attrName:'groupname',width:70},
+                        {name:'默认颜色',attrName:'颜色',width:70},
+                        {name:'默认中横框',attrName:'hboxname',width:70},
+                        {name:'默认中横框颜色',attrName:'中横颜色',width:70},
+                        {name:'默认门芯',attrName:'paneltype',width:70},
+                        {name:'默认门芯颜色',attrName:'门芯颜色',width:70},
+                        {name:'3D图形',attrName:'d3name',width:70},
+                        {name:'物料分类',attrName:'bomtype',width:70},
+                        {name:'单门LMAX',attrName:'cpm_lmax',width:70},
+                        {name:'单门HMAX',attrName:'cpm_hmax',width:70},
+                        {name:'是否斜切框',attrName:'is_xq',width:70},
+                        {name: '层板内进值',attrName:'cb_yyvalue',width:70},
+                        {name:'是否外购',attrName:'is_buy',width:70},
+                        {name:'内嵌门缝宽度',attrName:'eb_cap',width:70},
+                    ]
+                },
+                {
+                    name:'竖框',
+                    children:[
+                        {name:'竖框高度(公式)',attrName:'vboxl',width:70},
+                        {name:'竖框宽度(公式)',attrName:'vboxh',width:70},
+                        {name:'竖框名称',attrName:'vboxname',width:70},
+                        {name:'竖框壁厚',attrName:'vthick',width:70},
+                        {name:'竖框3D图形',attrName:'hbox3d',width:70},
+                        {name:'纹路',attrName:'vdirect',width:70},
+                        {name:'封边信息',attrName:'vfbstr',width:70},
+                        {name:'竖框备注',attrName:'vmemo',width:70},
+                    ]
+                },
+                {
+                    name:'上下横框',
+                    children:[
+                        {name:'上下横框宽度(公式)',attrName:'udboxl',width:70},
+                        {name:'上下横框高度(数值)',attrName:'udboxh',width:70},
+                        {name:'上下横框打孔位偏移',attrName:'udholepos',width:70},
+                        {name:'横框名称',attrName:'udboxname',width:70},
+                        {name:'横框壁厚',attrName:'udthick',width:70},
+                        {name:'上横框3D图形',attrName:'ubox3d',width:70},
+                        {name:'下横框3D图形',attrName:'dbox3d',width:70},
+                        {name:'纹路',attrName:'uddirect',width:70},
+                        {name:'封边信息',attrName:'udfbstr',width:70},
+                        {name:'上下横备注',attrName:'udmemo',width:70},
+                        {name:'中横框减量',attrName:'udbox_hbox_value',width:70},
+                    ]
+                },
+                {
+                    name:'玻璃门芯胶条位',
+                    children:[
+                        {name:'竖框胶条位',attrName:'vboxjtw',width:70},
+                        {name:'上下横框胶条位',attrName:'udboxjtw',width:70},
+                        {name:'中横框胶条位',attrName:'hboxjtw',width:70},
+                    ]
+                },
+                {
+                    name:'边框物料属性',
+                    children:[
+                        {name:'计算拆分边框',attrName:'iscalc_framebom',width:70},
+                        {name:'封边信息',attrName:'fbstr',width:70},
+                        {name:'宽度减量',attrName:'frame_valuel',width:70},
+                        {name:'高度减量',attrName:'frame_valueh',width:70},
+                    ]
+                },
+                {
+                    name:'BD文件',
+                    children:[
+                        {name:'门框BD',attrName:'bdfile',width:70},
+                        {name:'左竖框BD',attrName:'l_bdfile',width:70},
+                        {name:'右竖框BD',attrName:'r_bdfile',width:70},
+                        {name:'上横框BD',attrName:'u_bdfile',width:70},
+                        {name:'下横框BD',attrName:'d_bdfile',width:70},
+                    ]
+                },
+                {
+                    name:'XML',
+                    children:[
+                        {name:'左门XML',attrName:'left_doorxml',width:70},
+                        {name:'右门XML',attrName:'right_doorxml',width:70},
+                        {name:'单门XML',attrName:'doorxml',width:70},
+                        {name:'不计算门框物料',attrName:'noframe_bom'}
+                    ]
+                }
+            ]
+        },
+        writeLinkData:[{
+            attrName:'doorstype',
+            dataSource:doorDataItem,
+            isMoreSelect:false
+        },{
+            attrName:'handle',
+            dataSource:handleDataItem,
+            isMoreSelect:false
+        },{
+            attrName:'门铰分类',
+            dataSource:hingeDataItem,
+            isMoreSelect:false
+        },{
+            attrName:'hboxname',
+            dataSource:hkDataItem,
+            isMoreSelect:false
+        },{
+            attrName:'wjname',
+            dataSource:accessoryDataItem,
+            isMoreSelect:false
+        },{
+            attrName:'paneltype',
+            dataSource:doorCoreDataItem,
+            isMoreSelect:false
+        },{
+            attrName:'bomtype',
+            dataSource:wjDataItem,
+            isMoreSelect:false
+        },{
+            attrName:'开门方向',
+            dataSource:openWayArr,
+            isMoreSelect:true
+        },{
+            attrName:'vdirect',
+            dataSource:directArr,
+            isMoreSelect:false
+        },{
+            attrName:'uddirect',
+            dataSource:directArr,
+            isMoreSelect:false
+        },{
+            attrName:'is_xq',
+            dataSource:booleanArr,
+            isMoreSelect:false
+        },{
+            attrName:'is_buy',
+            dataSource:booleanArr,
+            isMoreSelect:false
+        },{
+            attrName:'iscalc_framebom',
+            dataSource:booleanArr,
+            isMoreSelect:false
+        },{
+            attrName:'noframe_bom',
+            dataSource:booleanArr,
+            isMoreSelect:false
+        },
+        ],
+        setTableLineHeight:{
+            lineHeight:'30px'
+        },
+		showColumn:{
+            attrNameArr:['name','doorstype','cap','开门方向','handle','wjname','门铰分类','groupname','颜色','hboxname','中横颜色','paneltype','门芯颜色','d3name','bomtype','cpm_lmax','cpm_hmax','is_xq','cb_yyvalue','is_buy','eb_cap','vboxl','vboxh','vboxname','vthick','hbox3d','vdirect','vfbstr','vmemo','udboxl','udboxh','udholepos','udboxname','udthick','ubox3d','dbox3d','uddirect','udfbstr','udmemo','udbox_hbox_value','vboxjtw','udboxjtw','hboxjtw','iscalc_framebom','fbstr','frame_valuel','frame_valueh','bdfile','l_bdfile','r_bdfile','u_bdfile','d_bdfile','left_doorxml','right_doorxml','doorxml','noframe_bom']
+        },
+        setColumnOrder: {
+            columnOrder:['name','doorstype','cap','开门方向','handle','wjname','门铰分类','groupname','颜色','hboxname','中横颜色','paneltype','门芯颜色','d3name','bomtype','cpm_lmax','cpm_hmax','is_xq','cb_yyvalue','is_buy','eb_cap','vboxl','vboxh','vboxname','vthick','hbox3d','vdirect','vfbstr','vmemo','udboxl','udboxh','udholepos','udboxname','udthick','ubox3d','dbox3d','uddirect','udfbstr','udmemo','udbox_hbox_value','vboxjtw','udboxjtw','hboxjtw','iscalc_framebom','fbstr','frame_valuel','frame_valueh','bdfile','l_bdfile','r_bdfile','u_bdfile','d_bdfile','left_doorxml','right_doorxml','doorxml','noframe_bom']
+        },
+        setEditColumn:{
+            editNameArr:['name','doorstype','cap','开门方向','handle','wjname','门铰分类','groupname','颜色','hboxname','中横颜色','paneltype','门芯颜色','d3name','bomtype','cpm_lmax','cpm_hmax','is_xq','cb_yyvalue','is_buy','eb_cap','vboxl','vboxh','vboxname','vthick','hbox3d','vdirect','vfbstr','vmemo','udboxl','udboxh','udholepos','udboxname','udthick','ubox3d','dbox3d','uddirect','udfbstr','udmemo','udbox_hbox_value','vboxjtw','udboxjtw','hboxjtw','iscalc_framebom','fbstr','frame_valuel','frame_valueh','left_doorxml','right_doorxml','doorxml','noframe_bom']
+        },
+        setTableWidth:{
+            tableWidth:4100,
+            isEqual:true
+        },
+        setPartRows:{
+            partRows:10,
+            isPaging:true
+        },
+        buttonRender:{
+          isCleanAll:false,
+          htmlStr:['<button style="background-color: #47a447;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="dataSave()">保存</button>','<button style="background-color: #ed9c28;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="javascript:location.reload();">取消</button>']
+        },
+    };
+    var test = new qd_Table();
+    test.setData('table1',dataSource,testData);
+    changeTextNode();
+    function changeTextNode(){
+        var tabelNodeId = document.getElementById('table1');
+        var divNode = tabelNodeId.lastChild;
+        var tbodyNode = divNode.children;
+    }
+    function dataSave() {
+        var newDataSource = [];
+        dataSource.forEach(function(data){
+            if(data.name!=''){
+                data.udholepos = data.udholepos == '' ? '0' : data.udholepos;
+                if(data['noframe_bom'] == 0) {
+                    data['noframe_bom'] = 'FALSE';
+                }else if(data['noframe_bom']!=0 && data['noframe_bom']!='FALSE'){
+                    data['noframe_bom'] = 'TRUE';
+                }
+                if(data['is_xq'] == 0) {
+                    data['is_xq'] = 'FALSE';
+                }else if(data['is_xq']!=0 && data['is_xq']!='FALSE'){
+                    data['is_xq'] = 'TRUE';
+                }
+                if(data['is_buy'] == 0) {
+                    data['is_buy'] = 'FALSE';
+                }else if(data['is_buy']!=0 && data['is_buy']!='FALSE'){
+                    data['is_buy'] = 'TRUE';
+                }
+                if(data['iscalc_framebom'] == 0) {
+                    data['iscalc_framebom'] = 'FALSE';
+                }else if(data['iscalc_framebom']!=0 && data['iscalc_framebom']!='FALSE'){
+                    data['iscalc_framebom'] = 'TRUE';
+                }
+                newDataSource.push(data);
+            }
+        })
+        console.log(newDataSource);
+        dataStr = JSON.stringify(newDataSource);
+        qdutils.WriteStringToFile(name_path,dataStr);
+        alert('保存成功');
+    }
+    function onfileSave(this_) {
+        var that = this_;
+        var that_parentText = that.textContent;
+        var thatAttrName = that.getAttribute('attrname');
+        var thatParentIndex = that.parentNode.firstElementChild.nextElementSibling.textContent - 1;
+        var filePathName  = qdutils.ShowOpenFileDialog(that_parentText, '*.bd|*.bd');
+        that.textContent = filePathName.substring(filePathName.indexOf('\\bd') + 1,filePathName.length);
+        for(var trIndex in dataSource) {
+            if(trIndex == thatParentIndex) {
+                dataSource[trIndex][thatAttrName] = that.textContent;
+            }
+        }
+    }
+    function extend(o,n) {
+        for(var key in n) if(n.hasOwnProperty(key) && !o.hasOwnProperty(key)) o[key]=n[key];
+        return o;
+    }
+    function loopInp(dataInp,dataOutp) {
+        if(!(dataInp instanceof Array) || !(dataOutp instanceof Array)) {
+            throw new Error('loopInp方法的array参数类型需为Array');
+        }
+        dataInp.forEach(function(data) {
+            if((data.name!== undefined || data.name!= '') && dataOutp.indexOf(data.name) == -1)
+                dataOutp.push(data.name);
+        })
+        return dataOutp;
+    }
+    var opt1 = {
+        tableId: 'table1',//table的id
+        selectClass: '_qd_tableContentDiv',
+        bgClass: '_global_trSelectBgColor',
+        menuId: 'menu',//menu的id
+        oldDataSource: dataSource
+    };
+    var rightclick = new RightClickText();
+    rightclick._initial(opt1);
+    document.onmousedown = function(ev){
+        if(ev.button == 0) {
+            menu.style.display = 'none';
+            var event = ev || window.event;
+            var target = event.target || event.srcElement;
+            if((target.cellIndex >= 48 && target.cellIndex <= 52) && target.parentNode.parentNode.parentNode.parentNode.className.indexOf('_qd_tableContentDiv') > -1) {
+                onfileSave(target);
+            }
+        }
+    }
+</script>
+</html>

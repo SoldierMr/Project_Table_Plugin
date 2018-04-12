@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/qd_table.min.css">
+    <script src="./js/qd_table.min.js"></script>
+    <script src='./js/contextMenu.min.js'></script>
+</head>
+<body>
+    <object id="qdutils" type="application/plugin-QdUtils.dll" style="width:0;height:0; position:absolute; top:-100px;"></object>
+    <div style="overflow: auto;width: 100%;height: 100%"><table id="table1"></table></div>
+</body>
+
+<script>
+	var path = qdutils.GetQuickDrawPath () + 'QdCloud\\Door\\掩门配置表\\';
+	var name_path = path + '五金配件.cfg';
+	var data = qdutils.ReadStringFromFile(name_path);
+    var linkData = ['板材','型材五金','五金'];
+    var dataItem;
+	var dataSource = (data == '') ? [] : JSON.parse(data);
+    var o = {name:'',unit:'',mytype:'',bomtype:'',数量:'',门类型:'',color:'',memo:'',bdfile:''};
+	dataSource.forEach(function (data) {
+        if(data['门类型']!= undefined && data.hasOwnProperty('门类型')) {
+            if(data['门类型'].slice(-1) == ',') {
+                data['门类型'] = data['门类型'].slice(0,-1);
+            }
+        }
+        data = extend(data,o);
+    });
+    if(dataSource.length == 0) {
+        var dataObj = {
+            name:'',
+            unit:'',
+            mytype:'',
+            bomtype:'',
+            数量:'',
+            门类型:'',
+            color:'',
+            memo:'',
+            bdfile:''
+        };
+        dataSource.push(dataObj)
+    }
+    var testData = {
+        rewriteTableTitle:{
+            dataSource:{
+                name:'名称',
+                unit:'单位',
+                mytype:'类型',
+                bomtype:'物料分类',
+                数量:'数量',
+                门类型:'门类型',
+                color:'颜色',
+                memo:'备注',
+                bdfile:'BD文件'
+            }
+        },
+        writeLinkData:{
+            attrName:'bomtype',
+            dataSource:linkData,
+            isMoreSelect:false
+        },
+		showColumn:{
+            attrNameArr:['name','unit','mytype','bomtype','数量','门类型','color','memo','bdfile']
+        },
+        setColumnOrder:{
+            columnOrder:['name','unit','mytype','bomtype','数量','门类型','color','memo','bdfile']
+        },
+		 setTableWidth:{
+            tableWidth:null,
+            isEqual:true
+        },
+        setTableLineHeight:{
+            lineHeight:'30px'
+        },
+        setPartRows:{
+            partRows:10,
+            isPaging:true
+        },
+        setEditColumn:{
+            editNameArr:['name','unit','mytype','bomtype','数量','门类型','color','memo']
+        },
+        buttonRender:{
+          isCleanAll:false,
+          htmlStr:['<button style="background-color: #47a447;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="dataSave()">保存</button>','<button style="background-color: #ed9c28;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="javascript:location.reload();">取消</button>']
+        }
+    };
+   
+    var test = new qd_Table();
+    test.setData('table1',dataSource,testData);
+    /**
+     * 保存函数
+     */
+    function dataSave() {
+        var newDataSource = [];
+        dataSource.forEach(function(data){
+            if(data.name!=''){
+                if(data['数量'] == '') data['数量'] = '0';
+                // if (data['门类型'].slice(-1) != ',' && data['门类型'] != '') {
+                //     data['门类型'] += ',';
+                // }
+                newDataSource.push(data);
+            }
+        })
+        dataStr = JSON.stringify(newDataSource);
+        qdutils.WriteStringToFile(name_path,dataStr);
+        alert('保存成功');
+    }
+    /**
+     * bd文件夹打开
+     */
+    function onfileSave(this_) {
+        var that = this_;
+        var that_parentText = that.textContent;
+        var thatAttrName = that.getAttribute('attrname');
+        var thatParentIndex = that.parentNode.firstElementChild.nextElementSibling.textContent - 1;
+        var filePathName  = qdutils.ShowOpenFileDialog(that_parentText, '*.bd|*.bd');
+        that.textContent = filePathName.substring(filePathName.indexOf('\\bd') + 1,filePathName.length);
+        for(var trIndex in dataSource) {
+            if(trIndex == thatParentIndex) {
+                dataSource[trIndex][thatAttrName] = that.textContent;
+            }
+        }
+    }
+    /**
+     * 补全数据
+     */
+    function extend(o,n) {
+        for(var key in n) if(n.hasOwnProperty(key) && !o.hasOwnProperty(key)) o[key]=n[key];
+        return o;
+    }
+    var opt1 = {
+        tableId: 'table1',//table的id
+        selectClass: '_qd_tableContentDiv',
+        bgClass: '_global_trSelectBgColor',
+        menuId: 'menu',//menu的id
+        oldDataSource: dataSource
+    };
+    var rightclick = new RightClickText();
+    rightclick._initial(opt1);
+    document.onmousedown = function(ev){
+        if(ev.button == 0) {
+            menu.style.display = 'none';
+            var event = ev || window.event;
+            var target = event.target || event.srcElement;
+            if((target.cellIndex == 10) && target.parentNode.parentNode.parentNode.parentNode.className.indexOf('_qd_tableContentDiv') > -1) {
+                onfileSave(target);
+            }
+        }
+    }
+</script>
+</html>

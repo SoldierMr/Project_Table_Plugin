@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/qd_table.min.css">
+     <script src="http://js.huaguangsoft.com/QdCloud/assets/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./js/qd_table.min.js"></script>
+    <script src='./js/contextMenu.min.js'></script>
+</head>
+<body>
+    <object id="qdutils" type="application/plugin-QdUtils.dll" style="width:0;height:0; position:absolute; top:-100px;"></object>
+    <div style="overflow: auto;width: 100%;height: 100%"><table id="table1"></table></div>
+</body>
+
+<script>
+	var path = qdutils.GetQuickDrawPath () + 'QdCloud\\Door\\掩门配置表\\';
+	var name_path = path + '门铰分类.cfg';
+    var hingeDataPath = path + '门铰.cfg';
+    var doorBorderDataPath = path + '掩门参数.cfg';
+    // 判断文件是否存在
+    function isFileExists(filePath) {
+        var result;
+        if(qdutils.FileExists(filePath)) {
+            if(qdutils.ReadStringFromFile(filePath).length < 1) {
+                result = [];
+            }else {
+                result = JSON.parse(qdutils.ReadStringFromFile(filePath));
+            }
+        }else {
+            return result = [];
+        }
+        return result;
+    }
+
+	// var data = qdutils.ReadStringFromFile(name_path);
+ //    var doorBorderDataSource = JSON.parse(qdutils.ReadStringFromFile(doorBorderDataPath));
+ //    var hingeDataSource = JSON.parse(qdutils.ReadStringFromFile(hingeDataPath));
+
+    var dataSource = isFileExists(name_path);
+    var doorBorderDataSource = isFileExists(doorBorderDataPath);
+    var hingeDataSource = isFileExists(hingeDataPath);
+    
+    var doorBorderData = [];
+    var hingeData = [];
+ //    var dataSource;
+ //    if(data==''){
+	// 	data='[]';
+	// }
+	// dataSource = JSON.parse(data);
+    dataSource.forEach(function (data) {
+        if(data.name === undefined) data.name = '';
+        if(data.mytype === undefined) data.mytype = '';
+        if(data.wjname === undefined) data.wjname ='';
+        if(data.bomtype === undefined) data.bomtype = '';
+        if(data.memo === undefined) data.memo = '';
+        if(data.bh === undefined) data.bh = '';
+        if(data['边框类型'] === undefined) data['边框类型'] = '';
+        if(data['门铰孔脚本'] === undefined) data['门铰孔脚本'] = '';
+        if(data.HingeHoleParam === undefined) data.HingeHoleParam = '';
+        if(data['边框类型']!= undefined && data.hasOwnProperty('边框类型')) {
+            if(data['边框类型'].slice(-1) == ',') {
+                data['边框类型'] = data['边框类型'].slice(0,-1);
+            }
+        }
+        if(data['HingeHoleParam']!= undefined && data.hasOwnProperty('HingeHoleParam')) {
+            if(data['HingeHoleParam'].indexOf('{') > -1 || data['HingeHoleParam'].indexOf('}') > -1) {
+                data['HingeHoleParam'] = data['HingeHoleParam'].replace(/\{|\}/g,'');
+            }
+        }
+        if(data.alias === undefined) data.alias = '';
+        if(data.min1 === undefined) data.min1 = '0';
+        if(data.min2 === undefined) data.min2 = '0';
+        if(data.min3 === undefined) data.min3 = '0';
+        if(data.min4 === undefined) data.min4 = '0';
+        if(data.min5 === undefined) data.min5 = '0';
+
+        if(data.max1 === undefined) data.max1 = '0';
+        if(data.max2 === undefined) data.max2 = '0';
+        if(data.max3 === undefined) data.max3 = '0';
+        if(data.max4 === undefined) data.max4 = '0';
+        if(data.max5 === undefined) data.max5 = '0';
+
+        if(data.num1 === undefined) data.num1 = '0';
+        if(data.num2 === undefined) data.num2 = '0';
+        if(data.num3 === undefined) data.num3 = '0';
+        if(data.num4 === undefined) data.num4 = '0';
+        if(data.num5 === undefined) data.num5 = '0';
+
+        if(data.default1 === undefined) data.default1 = '';
+        if(data.default2 === undefined) data.default2 = '';
+        if(data.default3 === undefined) data.default3 = '';
+        if(data.default4 === undefined) data.default4 = '';
+        if(data.default5 === undefined) data.default5 = '';
+    });
+    if(dataSource.length == 0) {
+        var dataObj = {
+            name:'',
+            wjname:'',
+            bomtype:'',
+            mytype:'',
+            memo:'',
+            bh:'',
+            边框类型:'',
+            门铰孔脚本:'',
+            HingeHoleParam:'',
+            alias:'',
+            min1:'',
+            max1:'',
+            num1:'',
+            default1:'',
+            min2:'',
+            max2:'',
+            num2:'',
+            default2:'',
+            min3:'',
+            max3:'',
+            num3:'',
+            default3:'',
+            min4:'',
+            max4:'',
+            num4:'',
+            default4:'',
+            min5:'',
+            max5:'',
+            num5:'',
+            default5:''
+        }
+        dataSource.push(dataObj);
+    }
+    doorBorderData = loopInp(doorBorderDataSource,doorBorderData);
+    hingeData = loopInp(hingeDataSource,hingeData);
+
+    var testData = {
+        writeLinkData:[
+            {
+                attrName:'边框类型',
+                dataSource:doorBorderData,
+                isMoreSelect:true
+            },{
+                attrName:'default1',
+                dataSource:hingeData,
+                isMoreSelect:true
+            },{
+                attrName:'default2',
+                dataSource:hingeData,
+                isMoreSelect:true
+            },{
+                attrName:'default3',
+                dataSource:hingeData,
+                isMoreSelect:true
+            },{
+                attrName:'default4',
+                dataSource:hingeData,
+                isMoreSelect:true
+            },{
+                attrName:'default5',
+                dataSource:hingeData,
+                isMoreSelect:true
+            }
+        ],
+        rewriteTableTitle:{
+            dataSource:{
+                name:'类别',
+                bh:'门板厚度',
+                边框类型:'边框类型',
+                门铰孔脚本:'门铰孔脚本',
+                HingeHoleParam:'脚本参数',
+                min1:'最小',
+                max1:'最大',
+                num1:'数量',
+                default1:'默认',
+                min2:'最小',
+                max2:'最大',
+                num2:'数量',
+                default2:'默认',
+                min3:'最小',
+                max3:'最大',
+                num3:'数量',
+                default3:'默认',
+                min4:'最小',
+                max4:'最大',
+                num4:'数量',
+                default4:'默认',
+                min5:'最小',
+                max5:'最大',
+                num5:'数量',
+                default5:'默认',
+            },
+            diyTitleData:[
+                {
+                    name:'',
+                    children:[
+                        {name:'类别',attrName:'name',width:100},
+                        {name:'门板厚度',attrName:'bh',width:100},
+                        {name:'边框类型',attrName:'边框类型',width:100},
+                        {name:'门铰孔脚本',attrName:'门铰孔脚本',width:100},
+                        {name:'脚本参数',attrName:'HingeHoleParam',width:100},
+                    ]
+                },
+                {
+                    name:'情况1',
+                    children:[
+                        {name:'最小',attrName:'min1',width:100},
+                        {name:'最大',attrName:'max1',width:100},
+                        {name:'数量',attrName:'num1',width:100},
+                        {name:'默认',attrName:'default1',width:100},
+                    ]
+                },
+                {
+                    name:'情况2',
+                    children:[
+                        {name:'最小',attrName:'min2',width:100},
+                        {name:'最大',attrName:'max2',width:100},
+                        {name:'数量',attrName:'num2',width:100},
+                        {name:'默认',attrName:'default2',width:100},
+                    ]
+                },
+                {
+                    name:'情况3',
+                    children:[
+                        {name:'最小',attrName:'min3',width:100},
+                        {name:'最大',attrName:'max3',width:100},
+                        {name:'数量',attrName:'num3',width:100},
+                        {name:'默认',attrName:'default3',width:100},
+                    ]
+                },
+                {
+                    name:'情况4',
+                    children:[
+                        {name:'最小',attrName:'min4',width:100},
+                        {name:'最大',attrName:'max4',width:100},
+                        {name:'数量',attrName:'num4',width:100},
+                        {name:'默认',attrName:'default4',width:100},
+                    ]
+                },
+                {
+                    name:'情况5',
+                    children:[
+                        {name:'最小',attrName:'min5',width:100},
+                        {name:'最大',attrName:'max5',width:100},
+                        {name:'数量',attrName:'num5',width:100},
+                        {name:'默认',attrName:'default5'},
+                    ]
+                },
+            ]
+        },
+		showColumn:{
+            attrNameArr:['name','bh','边框类型','门铰孔脚本','HingeHoleParam','min1','max1','num1','default1','min2','max2','num2','default2','min3','max3','num3','default3','min4','max4','num4','default4','min5','max5','num5','default5']
+        },
+        setColumnOrder:{
+            columnOrder:['name','bh','边框类型','门铰孔脚本','HingeHoleParam','min1','max1','num1','default1','min2','max2','num2','default2','min3','max3','num3','default3','min4','max4','num4','default4','min5','max5','num5','default5']
+        },
+        setTableWidth:{
+            tableWidth:2650,
+            isEqual:true
+        },
+        setTableLineHeight:{
+            lineHeight:'30px'
+        },
+        setEditColumn:{
+            editNameArr:['name','bh','边框类型','门铰孔脚本','HingeHoleParam','min1','max1','default1','min2','max2','default2','min3','max3','default3','min4','max4','default4','min5','max5','default5']
+        },
+        setPartRows:{
+            partRows:10,
+            isPaging:true
+        },
+        buttonRender:{
+          isCleanAll:false,
+          htmlStr:['<button style="background-color: #47a447;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="dataSave()">保存</button>','<button style="background-color: #ed9c28;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="javascript:location.reload();">取消</button>']
+        },
+    };
+    var test = new qd_Table();
+    test.setData('table1',dataSource,testData);
+    function dataSave() {
+        var newDataSource = [];
+        dataSource.forEach(function(data){
+            if(data.name!=''){
+                if(data.bh == '') data.bh = '0';
+                if(data.min1 =='') data.min1 = '0';
+                if(data.min2 =='') data.min2 = '0';
+                if(data.min3 =='') data.min3 = '0';
+                if(data.min4 =='') data.min4 = '0';
+                if(data.min5 =='') data.min5 = '0';
+                if(data.max1 =='') data.max1 = '0';
+                if(data.max2 =='') data.max2 = '0';
+                if(data.max3 =='') data.max3 = '0';
+                if(data.max4 =='') data.max4 = '0';
+                if(data.max5 =='') data.max5 = '0';
+                if(data.num1 =='') data.num1 = '0';
+                if(data.num2 =='') data.num2 = '0';
+                if(data.num3 =='') data.num3 = '0';
+                if(data.num4 =='') data.num4 = '0';
+                if(data.num5 =='') data.num5 = '0';
+                if(data['HingeHoleParam'].indexOf('{') > -1 || data['HingeHoleParam'].indexOf('}') > -1) {
+                    data['HingeHoleParam'] = data['HingeHoleParam'].replace(/\{|\}/g,'');
+                }
+                // if(data['边框类型'].slice(-1) != ',' && data['边框类型'] != ''){
+                //     data['边框类型'] += ',';
+                // }
+                newDataSource.push(data);
+            }
+        })
+        dataStr = JSON.stringify(newDataSource);
+        qdutils.WriteStringToFile(name_path,dataStr);
+        alert('保存成功');
+    }
+    function loopInp(dataInp,dataOutp) {
+        if(!(dataInp instanceof Array) || !(dataOutp instanceof Array)) {
+            throw new Error('loopInp方法的array参数类型需为Array');
+        }
+        dataInp.forEach(function(data) {
+            if((data.name!== undefined || data.name!= '') && dataOutp.indexOf(data.name) == -1)
+                dataOutp.push(data.name);
+        })
+        return dataOutp;
+    }
+    // 复制数据字段到数据源里
+    function extend(o,n) {
+        for(var key in n) if(n.hasOwnProperty(key) && !o.hasOwnProperty(key)) o[key]=n[key];
+        return o;
+    }
+    var opt1 = {
+        tableId: 'table1',//table的id
+        selectClass: '_qd_tableContentDiv',
+        bgClass: '_global_trSelectBgColor',
+        menuId: 'menu',//menu的id
+        oldDataSource: dataSource
+    };
+    var rightclick = new RightClickText();
+    rightclick._initial(opt1);
+
+    document.ondblclick = function(ev){
+        var TdEdit = void 0;
+        var TdEditButton = void 0;
+        var TdEditTextarea = void 0;
+        var TdEditPrev = void 0;
+        var isFlag = false;
+        var tempTdEdit = void 0;
+        var pIndex = void 0;
+        var attr = void 0;
+        var attrArr = [];
+        var event = ev || window.event;
+        var target = event.target || event.srcElement;
+        tempTdEdit = target;
+        TdEdit = document.getElementById('_qd_tableTdEdit');
+        if(target.hasAttribute("attrname") && target.tagName.toLowerCase() == 'td') {
+            if(target.getAttribute('attrname').indexOf('default') > -1) {
+                TdEditPrev = tempTdEdit.previousElementSibling;
+                pIndex = tempTdEdit.parentNode.children[1].innerText;
+                attr = TdEditPrev.getAttribute('attrname');
+                isFlag = true;
+            }
+            attrArr.push(attr);
+        }
+        if(TdEdit && event && isFlag) {
+            TdEditTextarea = TdEdit.getElementsByClassName('_qd_editBoxTextArea')[0];
+            TdEditButton = TdEdit.getElementsByClassName('_qd_editBoxDownPart')[0].firstElementChild;
+            TdEditButton.onmousedown = function() {
+                if(attrArr.length > 0) {
+                    var textNums = TdEditTextarea.value.match(/\,/g);
+                    if(TdEditTextarea.value.length < 1 && !textNums) {
+                        TdEditPrev.innerText = 0;
+                    } else if(!textNums && TdEditTextarea.value.length > 0) {
+                        TdEditPrev.innerText = 1;
+                    } else if(textNums && TdEditTextarea.value.length > 0) {
+                        TdEditPrev.innerText = textNums.length + 1;
+                    }
+                    writeDataSource(pIndex-1,attr,TdEditPrev.innerText);
+                }
+                isFlag = false;
+                attrArr.length = 0;
+            }
+        }
+    }
+    //将修改的字段更新到数据源里
+    function writeDataSource(pId,attr1,txt) {
+        for(var key in dataSource) {
+            if(pId == key && dataSource[key][attr1]) {
+                dataSource[key][attr1] = txt;
+            }
+        }
+    }
+    // 点击去掉menu菜单
+    document.onmousedown = function(ev) {
+        if(ev.button == 0) {
+            if(menu) {
+                menu.style.display = 'none';
+            }
+        }
+    }
+</script>
+</html>

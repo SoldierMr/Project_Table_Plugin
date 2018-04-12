@@ -1,0 +1,48 @@
+
+/*目录*/
+.catalog li a{
+	text-decoration: none;
+	font-style: normal;
+	color: #2E462F;
+}
+.codeBlock {
+	background-color: #DCDCDC;
+}
+.catalog li {
+	padding: 5px;
+}
+.each-title {
+	background-color: #4A4A4A;
+	color: white;
+	height: 40px;
+	line-height: 40px;
+}
+.tag {
+	position: fixed;
+	right: 5px;
+	bottom: 5%;
+
+}
+.backMenu {
+	display: block;
+	width: 100px;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	background-color: #E4E3E3;
+}
+.backMenu:hover {
+	background-color: black;
+	color: white;
+}
+pre { 
+	padding: 10px;
+	white-space: pre-wrap; /* css-3 */ 
+	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */ 
+	white-space: -pre-wrap; /* Opera 4-6 */ 
+	white-space: -o-pre-wrap; /* Opera 7 */ 
+	word-wrap: break-word; /* Internet Explorer 5.5+ */ 
+} 
+

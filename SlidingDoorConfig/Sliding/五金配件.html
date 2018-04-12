@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/qd_table.min.css">
+    <script src="./js/qd_table.min.js"></script>
+    <script src='./js/contextMenu.min.js'></script>
+</head>
+<body>
+    <object id="qdutils" type="application/plugin-QdUtils.dll" style="width:0;height:0; position:absolute; top:-100px;"></object>
+    <div style="overflow: auto;width: 100%;height: 100%"><table id="table1"></table></div>
+</body>
+
+<script>
+	
+    var path = qdutils.GetQuickDrawPath () + 'QdCloud\\Sliding\\趟门配置表\\';
+    var name_path = path + '五金配件.cfg';
+    var doorTypePath = path + '门类型.cfg';
+    var data = qdutils.ReadStringFromFile(name_path);
+    var dataSource = (data == '') ? [] :JSON.parse(data);
+    var doorTypeDataSource = JSON.parse(qdutils.ReadStringFromFile(doorTypePath));
+    var doorTypeLinkData = [];
+	dataSource.forEach(function (data) {
+	    if(data.name === undefined) data.name = '';
+        if(data.unit === undefined) data.unit = '';
+        if(data.wlcode === undefined) data.wlcode = '';
+        if(data.myclass === undefined) data.myclass = '';
+        
+        data.isglass = (data.isglass === undefined) ? 'FALSE' : data.isglass;
+        data.isbaiye = (data.isbaiye === undefined) ? 'FALSE' : data.isbaiye;
+        data.isuserselect = (data.isuserselect === undefined) ? 'FALSE' : data.isuserselect;
+        if(data['isglass']!= undefined && data.hasOwnProperty('isglass')) {
+            if(data['isglass'] == 0) {
+                data['isglass'] = 'FALSE';
+            }else if(data['isglass']!=0 && data['isglass']!='FALSE'){
+                data['isglass'] = 'TRUE';
+            }
+        }
+        if(data['isbaiye']!= undefined && data.hasOwnProperty('isbaiye')) {
+            if(data['isbaiye'] == 0) {
+                data['isbaiye'] = 'FALSE';
+            }else if(data['isbaiye']!=0 && data['isbaiye']!='FALSE'){
+                data['isbaiye'] = 'TRUE';
+            }
+        }
+        if(data['isuserselect']!= undefined && data.hasOwnProperty('isuserselect')) {
+            if(data['isuserselect'] == 0) {
+                data['isuserselect'] = 'FALSE';
+            }else if(data['isuserselect']!=0 && data['isuserselect']!='FALSE'){
+                data['isuserselect'] = 'TRUE';
+            }
+        }
+        if(data['门类型'] === undefined) data['门类型'] = '';
+        if(data['门类型']!= undefined && data.hasOwnProperty('门类型')) {
+            if(data['门类型'].slice(-1) == ',') {
+                data['门类型'] = data['门类型'].slice(0,-1);
+            }
+        }
+        if(data.color === undefined) data.color = '';
+        if(data.memo === undefined) data.memo = '';
+        if(data.memo2 === undefined) data.memo2 = '';
+        if(data.memo3 === undefined) data.memo3 = '';
+        if(data.bdfile === undefined) data.bdfile = '';
+   	});
+    if(dataSource.length == 0) {
+        var dataObj = {
+            name:'',
+            unit:'',
+            wlcode:'',
+            myclass:'',
+            门类型:'',
+            isglass:'FALSE',
+            isbaiye:'FALSE',
+            isuserselect:'FALSE',
+            color:'',
+            memo:'',
+            memo2:'',
+            memo3:'',
+            bdfile:''
+        };
+        dataSource.push(dataObj)
+    }
+    var wjTypeLinkData=[];
+    dataSource.forEach(function (linkData) {
+        if(isInArray(linkData.myclass,wjTypeLinkData) < 0) {
+            wjTypeLinkData.push(linkData.myclass);
+        }
+    });
+    doorTypeDataSource.forEach(function (linkData) {
+        if(isInArray(linkData.name,doorTypeLinkData) < 0) {
+            doorTypeLinkData.push(linkData.name);
+        }
+    });
+    var ckArr=['TRUE','FALSE'];
+    var testData = {
+        rewriteTableTitle:{
+            dataSource:{
+                name:'名称',
+                unit:'单位',
+                wlcode:'编码',
+                myclass:'分类',
+                门类型:'门类型',
+                isglass:'是否玻璃',
+                isbaiye:'是否木板',
+                isuserselect:'是否可选',
+                color:'颜色',
+                memo:'备注',
+                memo2:'备注2',
+                memo3:'备注3',
+                bdfile:'BD文件',
+            }
+        },
+		showColumn:{
+            attrNameArr:['name','unit','wlcode','myclass','门类型','isglass','isbaiye','isuserselect','color','memo','memo2','memo3','bdfile']
+        },
+        setColumnOrder:{
+            columnOrder:['name','unit','wlcode','myclass','门类型','isglass','isbaiye','isuserselect','color','memo','memo2','memo3','bdfile']
+        },
+        setTableWidth:{
+            tableWidth:2000,
+            isEqual:true
+        },
+        writeLinkData:[
+            {
+                attrName:'myclass',
+                dataSource:wjTypeLinkData,
+                isMoreSelect:false
+            },
+            {
+                attrName:'门类型',
+                dataSource:doorTypeLinkData,
+                isMoreSelect:true
+            },
+            {
+                attrName:'isglass',
+                dataSource:ckArr,
+                isMoreSelect:false
+            },
+            {
+                attrName:'isbaiye',
+                dataSource:ckArr,
+                isMoreSelect:false
+            },
+            {
+                attrName:'isuserselect',
+                dataSource:ckArr,
+                isMoreSelect:false
+            }
+        ],
+        setEditColumn:{
+            editNameArr:['name','unit','wlcode','myclass','门类型','isglass','isbaiye','isuserselect','color','memo','memo2','memo3']
+        },
+        setPartRows:{
+            partRows:10,
+            isPaging:true
+        },
+        setTableLineHeight:{
+            lineHeight:'30px'
+        },
+        buttonRender:{
+          isCleanAll:false,
+          htmlStr:['<button style="background-color: #47a447;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="dataSave()">保存</button>','<button style="background-color: #ed9c28;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="javascript:location.reload();">取消</button>']
+        }
+    };
+    var test = new qd_Table();
+    test.setData('table1',dataSource,testData);
+    function dataSave() {
+        var newDataSource = [];
+        dataSource.forEach(function(data){
+            if(data.name!=''){
+           
+                if(data['isglass'] == 0) {
+                    data['isglass'] = 'FALSE';
+                }else if(data['isglass']!=0 && data['isglass']!='FALSE'){
+                    data['isglass'] = 'TRUE';
+                }
+            
+                if(data['isbaiye'] == 0) {
+                    data['isbaiye'] = 'FALSE';
+                }else if(data['isbaiye']!=0 && data['isbaiye']!='FALSE'){
+                    data['isbaiye'] = 'TRUE';
+                }
+                if(data['isuserselect'] == 0) {
+                    data['isuserselect'] = 'FALSE';
+                }else if(data['isuserselect']!=0 && data['isuserselect']!='FALSE'){
+                    data['isuserselect'] = 'TRUE';
+                }
+                newDataSource.push(data);
+            }
+        })
+        dataStr = JSON.stringify(newDataSource);
+        qdutils.WriteStringToFile(name_path,dataStr);
+        alert('保存成功');
+    }
+    var opt = {
+        tableId: 'table1',//table的id
+        selectClass: '_qd_tableContentDiv',
+        bgClass: '_global_trSelectBgColor',
+        menuId: 'menu',//menu的id
+        oldDataSource: dataSource
+    };
+    var rightclick = new RightClickText();
+    rightclick._initial(opt);
+    document.onmousedown = function(ev){
+        if(ev.button == 0) {
+            menu.style.display = 'none';
+            var event = ev || window.event;
+            var target = event.target || event.srcElement;
+            if((target.cellIndex == 14) && target.parentNode.parentNode.parentNode.parentNode.className.indexOf('_qd_tableContentDiv') > -1) {
+                onfileSave(target);
+            }
+        }
+    }
+    /**
+     * 新增函数
+     * 用于判断数组是否存在某数据
+     */
+    function isInArray(itemData,arr) {
+        if(!(arr instanceof Array)){
+            console.log('isInArray的arr参数需为Array');
+            return;
+        }
+        var returnIndex = -1;
+        var index;
+        for(index in arr){
+            if(itemData == arr[index]){
+                returnIndex = index;
+                break;
+            }
+        }
+        return returnIndex;
+    }
+    function onfileSave(this_) {
+        var that = this_;
+        var that_parentText = that.textContent;
+        var thatAttrName = that.getAttribute('attrname');
+        var thatParentIndex = that.parentNode.firstElementChild.nextElementSibling.textContent - 1;
+        var filePathName  = qdutils.ShowOpenFileDialog(that_parentText, '*.bd|*.bd');
+        that.textContent = filePathName.substring(filePathName.indexOf('\\bd') + 1,filePathName.length);
+        for(var trIndex in dataSource) {
+            if(trIndex == thatParentIndex) {
+                dataSource[trIndex][thatAttrName] = that.textContent;
+            }
+        }
+    }
+</script>
+</html>

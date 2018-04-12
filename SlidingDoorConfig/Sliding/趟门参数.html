@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/qd_table.min.css">
+    <script src="./js/qd_table.min.js"></script>
+    <script src='./js/contextMenu.min.js'></script>
+	<object id="qdutils" type="application/plugin-QdUtils.dll" style="width:0;height:0; position:absolute; top:-100px;"></object>
+</head>
+<body>
+    <div style="overflow: auto;width: 100%;height: 100%"><table id="table1"></table></div>
+</body>
+
+<script>
+	var path = qdutils.GetQuickDrawPath () + 'QdCloud\\Sliding\\趟门配置表\\';
+    var name_path = path + '趟门参数.cfg';
+    var data = qdutils.ReadStringFromFile(name_path);
+    var dataSource = (data == '') ? [] : JSON.parse(data);
+    dataSource.forEach(function (data) {
+        if(data.name === undefined) data.name = '';
+        if(data.vboxtype === undefined) data.vboxtype = '';
+        if(data.overlap === undefined) data.overlap = '';
+        if(data.ddlpos === undefined) data.ddlpos = '';
+        if(data.fztkd === undefined) data.fztkd = '';
+        if(data.doortype === undefined) data.doortype = '';
+        if(data.glassvalue1 === undefined) data.glassvalue1 = '';
+        if(data.glassvalue2 === undefined) data.glassvalue2 = '';
+        if(data.track === undefined) data.track = '';
+        if(data.udbox === undefined) data.udbox = '';
+        if(data.zndlun === undefined) data.zndlun = '';
+        if(data.ddlun === undefined) data.ddlun = '';
+        if(data.diaolun === undefined) data.diaolun = '';
+        if(data.groupname === undefined) data.groupname = '';
+        if(data.gddwlun === undefined) data.gddwlun = '';
+        if(data.hddwlun === undefined) data.hddwlun = '';
+        if(data.ls === undefined) data.ls = '';
+        if(data.wjname === undefined) data.wjname = '';
+        if(data.hbox === undefined) data.hbox = '';
+        if(data.vboxjtw === undefined) data.vboxjtw = '';
+        if(data.uboxjtw === undefined) data.uboxjtw = '';
+        if(data.dboxjtw === undefined) data.dboxjtw = '';
+        if(data.hboxjtw === undefined) data.hboxjtw = '';
+        if(data.laminating === undefined) data.laminating = '';
+        if(data.cpm_hmax === undefined) data.cpm_hmax = '';
+        if(data.cpm_lmax === undefined) data.cpm_lmax = '';
+        if(data.hboxvalue === undefined) data.hboxvalue = '';
+        data.is_xq = (data.is_xq === undefined) ? 'FALSE' : data.is_xq;
+        if(data['is_xq']!= undefined && data.hasOwnProperty('is_xq')) {
+            if(data['is_xq'] == 0) {
+                data['is_xq'] = 'FALSE';
+            }else if(data['is_xq']!=0 && data['is_xq']!='FALSE'){
+                data['is_xq'] = 'TRUE';
+            }
+        }
+    });
+	var vboxPath=path + '竖框参数.cfg';
+	var upDownRailPath = path + '上下轨参数.cfg';
+	var upDownHFramePath = path + '上下横框参数.cfg';
+	var middleHFramePath = path + '中横框参数.cfg';
+	var doorTypePath = path + '门类型.cfg';
+	var wjTypePath=path + '五金配件分类.cfg';
+    var vboxDataSource=JSON.parse(qdutils.ReadStringFromFile(vboxPath));
+    var upDownRailDataSource = JSON.parse(qdutils.ReadStringFromFile(upDownRailPath));
+    var upDownHFrameDataSource = JSON.parse(qdutils.ReadStringFromFile(upDownHFramePath));
+    var middleHFrameDataSource = JSON.parse(qdutils.ReadStringFromFile(middleHFramePath));
+    var doorTypeDataSource = JSON.parse(qdutils.ReadStringFromFile(doorTypePath));
+    var wjTypeDataSource = JSON.parse(qdutils.ReadStringFromFile(wjTypePath));
+    var vboxLinkData=[];
+    var upDownRailLinkData = [];
+    var upDownHFrameLinkData = [];
+    var middleHFrameLinkData = [];
+    var doorTypeLinkData=[];
+    var wjTypeLinkData=[];
+    vboxDataSource.forEach(function (linkData) {
+        if(isInArray(linkData.name,vboxLinkData) < 0) {
+            vboxLinkData.push(linkData.name);
+        }
+    });
+    upDownRailDataSource.forEach(function (linkData) {
+        if(isInArray(linkData.name,upDownRailLinkData) < 0) {
+            upDownRailLinkData.push(linkData.name);
+        }
+    });
+    upDownHFrameDataSource.forEach(function (linkData) {
+        if(isInArray(linkData.name,upDownHFrameLinkData) < 0) {
+            upDownHFrameLinkData.push(linkData.name);
+        }
+    });
+    middleHFrameDataSource.forEach(function (linkData) {
+        if(isInArray(linkData.name,middleHFrameLinkData) < 0) {
+            middleHFrameLinkData.push(linkData.name);
+        }
+    });
+    doorTypeDataSource.forEach(function (linkData) {
+        if(isInArray(linkData.name,doorTypeLinkData) < 0) {
+            doorTypeLinkData.push(linkData.name);
+        }
+    });
+    wjTypeDataSource.forEach(function (linkData) {
+        if(isInArray(linkData.name,wjTypeLinkData) < 0) {
+            wjTypeLinkData.push(linkData.name);
+        }
+    });
+    if(dataSource.length < 1) {
+        var objE = {
+            name : '',
+            vboxtype : '',
+            overlap : '',
+            ddlpos : '',
+            fztkd : '',
+            doortype : '',
+            glassvalue1 : '',
+            glassvalue2 : '',
+            track : '',
+            udbox : '',
+            zndlun : '',
+            ddlun : '',
+            diaolun : '',
+            groupname : '',
+            gddwlun : '',
+            hddwlun : '',
+            ls : '',
+            wjname : '',
+            hbox : '',
+            vboxjtw : '',
+            uboxjtw : '',
+            dboxjtw : '',
+            hboxjtw : '',
+            laminating : '',
+            cpm_hmax : '',
+            cpm_lmax : '',
+            hboxvalue : '',
+            is_xq : ''
+        }
+        dataSource.push(objE);
+    }
+    var ckArr=['TRUE','FALSE'];
+    var testData = {
+        rewriteTableTitle:{
+            dataSource:{
+                name:'名称',
+                doortype:'门类型',
+                laminating:'是否覆膜',
+                cpm_lmax:'单门LMAX',
+                cpm_hmax:'单门HMAX',
+                groupname:'分组',
+                is_xq:'是否斜切框',
+                overlap:'重叠位',
+                ddlpos:'顶底轮位',
+                fztkd:'防撞条宽度',
+                vboxjtw:'竖框胶条位',
+                uboxjtw:'上横框胶条位',
+                dboxjtw:'下横框胶条位',
+                hboxjtw:'中横框胶条位',
+                hboxvalue:'中横框减量',
+                vboxtype:'竖框类型',
+                track:'上下轨',
+                udbox:'上下横框',
+                hbox:'中横框',
+                wjname:'关联五金'
+            },
+            diyTitleData:[
+                {
+                    name:'',
+                    children:[
+                        {
+                            name:'名称',
+                            attrName:'name',
+                            width:100
+                        },
+                        {
+                            name:'门类型',
+                            attrName:'doortype',
+                            width:100
+                        },
+                        {
+                            name:'是否覆膜',
+                            attrName:'laminating',
+                            width:100
+                        },
+                        {
+                            name:'单门LMAX',
+                            attrName:'cpm_lmax',
+                            width:100
+                        },
+                        {
+                            name:'单门HMAX',
+                            attrName:'cpm_hmax',
+                            width:100
+                        },
+                        {
+                            name:'分组',
+                            attrName:'groupname',
+                            width:100
+                        },
+                        {
+                            name:'是否斜切框',
+                            attrName:'is_xq',
+                            width:100
+                        },
+                    ]
+                },
+                {
+                    name:'参数类',
+                    children:[
+                        {
+                            name:'重叠位',
+                            attrName:'overlap',
+                            width:100
+                        },
+                        {
+                            name:'顶底轮位',
+                            attrName:'ddlpos',
+                            width:100
+                        },
+                        {
+                            name:'防撞条宽度',
+                            attrName:'fztkd',
+                            width:100
+                        },
+                        {
+                            name:'竖框胶条位',
+                            attrName:'vboxjtw',
+                            width:100
+                        },
+                        {
+                            name:'上横框胶条位',
+                            attrName:'uboxjtw',
+                            width:100
+                        },
+                        {
+                            name:'下横框胶条位',
+                            attrName:'dboxjtw',
+                            width:100
+                        },
+                        {
+                            name:'中横框胶条位',
+                            attrName:'hboxjtw',
+                            width:100
+                        },
+                        {
+                            name:'中横框减量',
+                            attrName:'hboxvalue',
+                            width:100
+                        },
+                    ]
+                },
+                {
+                    name:'型材类',
+                    children:[
+                        {
+                            name:'竖框类型',
+                            attrName:'vboxtype',
+                            width:100
+                        },
+                        {
+                            name:'上下轨',
+                            attrName:'track',
+                            width:100
+                        },
+                        {
+                            name:'上下横框',
+                            attrName:'udbox',
+                            width:100
+                        },
+                        {
+                            name:'中横框',
+                            attrName:'hbox',
+                            width:100
+                        },
+                    ]
+                },
+                {
+                    name:'五金类',
+                    children:[
+                        {name:'关联五金',attrName:'wjname'},
+                    ]
+                },
+            ]
+        },
+		showColumn:{
+            attrNameArr:['name','doortype','laminating','cpm_lmax','cpm_hmax','groupname','is_xq','overlap','ddlpos','fztkd','vboxjtw','uboxjtw','dboxjtw','hboxjtw','hboxvalue','vboxtype','track','udbox','hbox','wjname']
+        },
+        setColumnOrder:{
+            columnOrder:['name','doortype','laminating','cpm_lmax','cpm_hmax','groupname','is_xq','overlap','ddlpos','fztkd','vboxjtw','uboxjtw','dboxjtw','hboxjtw','hboxvalue','vboxtype','track','udbox','hbox','wjname']
+        },
+        setTableWidth:{
+            tableWidth:2200,
+            isEqual:true
+        },
+        setTableLineHeight:{
+            lineHeight:'30px'
+        },
+        writeLinkData:[
+            {
+                attrName:'laminating',
+                dataSource:ckArr,
+                isMoreSelect:false
+            },
+            {
+                attrName:'doortype',
+                dataSource:doorTypeLinkData,
+                isMoreSelect:false
+            },
+            {
+                attrName:'is_xq',
+                dataSource:ckArr,
+                isMoreSelect:false
+            },
+            {
+                attrName:'vboxtype',
+                dataSource:vboxLinkData,
+                isMoreSelect:false
+            },
+            {
+                attrName:'track',
+                dataSource:upDownRailLinkData,
+                isMoreSelect:false
+            },
+            {
+                attrName:'udbox',
+                dataSource:upDownHFrameLinkData,
+                isMoreSelect:false
+            },
+            {
+                attrName:'hbox',
+                dataSource:middleHFrameLinkData,
+                isMoreSelect:false
+            },
+            {
+                attrName:'wjname',
+                dataSource:wjTypeLinkData,
+                isMoreSelect:false
+            }
+        ],
+        setPartRows:{
+            partRows:10,
+            isPaging:true
+        },
+        setEditColumn:{
+            editNameArr:'all'
+        },
+        buttonRender:{
+          isCleanAll:false,
+          htmlStr:['<button style="background-color: #47a447;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="dataSave()">保存</button>','<button style="background-color: #ed9c28;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="javascript:location.reload();">取消</button>']
+        }
+    };
+    var test = new qd_Table();
+    test.setData('table1',dataSource,testData);
+    function dataSave() {
+    	dataSource.forEach(function (data) {
+	        if(data['is_xq'] == 0) {
+                data['is_xq'] = 'FALSE';
+            }else if(data['is_xq']!=0 && data['is_xq']!='FALSE'){
+                data['is_xq'] = 'TRUE';
+            }
+   		});
+        dataStr = JSON.stringify(dataSource);
+        qdutils.WriteStringToFile(name_path,dataStr);
+        alert('保存成功');
+    }
+    var opt1 = {
+        tableId: 'table1',//table的id
+        selectClass: '_qd_tableContentDiv',
+        bgClass: '_global_trSelectBgColor',
+        menuId: 'menu',//menu的id
+        oldDataSource: dataSource
+    };
+    var rightclick = new RightClickText();
+    rightclick._initial(opt1);
+    document.onmousedown = function(ev){
+        if(ev.button == 0) {
+            menu.style.display = 'none';
+        }
+    }
+    /**
+     * 新增函数
+     * 用于判断数组是否存在某数据
+     */
+    function isInArray(itemData,arr) {
+        if(!(arr instanceof Array)){
+            console.log('isInArray的arr参数需为Array');
+            return;
+        }
+        var returnIndex = -1;
+        var index;
+        for(index in arr){
+            if(itemData == arr[index]){
+                returnIndex = index;
+                break;
+            }
+        }
+        return returnIndex;
+    }
+</script>
+</html>

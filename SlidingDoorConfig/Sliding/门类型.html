@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/qd_table.min.css">
+    <script src="./js/qd_table.min.js"></script>
+    <script src='./js/contextMenu.min.js'></script>
+	<object id="qdutils" type="application/plugin-QdUtils.dll" style="width:0;height:0; position:absolute; top:-100px;"></object>
+</head>
+<body>
+    <div style="overflow: auto;width: 100%;height: 100%"><table id="table1"></table></div>
+</body>
+
+<script>
+	var path = qdutils.GetQuickDrawPath () + 'QdCloud\\Sliding\\趟门配置表\\';
+	var name_path = path + '门类型.cfg';
+	var data = qdutils.ReadStringFromFile(name_path);
+	var dataSource = (data == '') ? [] : JSON.parse(data);
+	dataSource.forEach(function (data) {
+        if(data.name === undefined) {
+            data.name = '';
+        }
+    });
+    if(dataSource.length < 1) {
+        dataSource.push({name:''});
+    }
+    var testData = {
+        rewriteTableTitle:{
+            dataSource:{name:'名称'}
+        },
+		showColumn:{
+            attrNameArr:['name']
+        },
+        setTableWidth:{
+            tableWidth:null,
+            isEqual:true
+        },
+        setTableLineHeight:{
+            lineHeight:'30px'
+        },
+        setEditColumn:{
+            editNameArr:'all'
+        },
+        setPartRows:{
+            partRows:10,
+            isPaging:true
+        },
+        buttonRender:{
+          isCleanAll:false,
+          htmlStr:['<button style="background-color: #47a447;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="dataSave()">保存</button>','<button style="background-color: #ed9c28;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="javascript:location.reload();">取消</button>']
+        }
+    };
+    var test = new qd_Table();
+    test.setData('table1',dataSource,testData);
+    function dataSave() {
+        var newDataSource = [];
+        dataSource.forEach(function(data){
+            if(data.name!=''){
+                newDataSource.push(data);
+            }
+        })
+        dataStr = JSON.stringify(newDataSource);
+        qdutils.WriteStringToFile(name_path,dataStr);
+        alert('保存成功');
+    }
+    var opt1 = {
+        tableId: 'table1',//table的id
+        selectClass: '_qd_tableContentDiv',
+        bgClass: '_global_trSelectBgColor',
+        menuId: 'menu',//menu的id
+        oldDataSource: dataSource
+    };
+    var rightclick = new RightClickText();
+    rightclick._initial(opt1);
+    document.onmousedown = function(ev){
+        if(ev.button == 0) {
+            menu.style.display = 'none';
+        }
+    }
+</script>
+</html>

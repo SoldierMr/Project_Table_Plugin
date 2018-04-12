@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/qd_table.min.css">
+    <script src="./js/qd_table.min.js"></script>
+    <script src='./js/contextMenu.min.js'></script>
+    <style>
+        .mainDiv{
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+
+            display: flex;
+            display: -webkit-flex;
+
+            flex-direction: row;
+            -webkit-flex-direction: row;
+        }
+        .leftListDiv{
+            width: 250px;
+            height: 100%;
+        }
+        .tableDiv {
+            width: auto;
+            height: 100%;
+
+            display: flex;
+            display: -webkit-flex;
+
+            flex: 1;
+            -webkit-flex: 1;
+        }
+        .classListDiv {
+            width: 230px;
+            height: auto;
+            overflow-x: hidden;
+            overflow-y: auto;
+            position: fixed;
+            margin: auto;
+            top: 10px;
+            left: 10px;
+            bottom: 10px;
+        }
+        .classList {
+            width: 100%;
+            height: auto;
+            background-color: #eeeeee;
+            border-bottom: 1px solid #000000;
+            /*用户不能选取*/
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .listItem {
+            width: 100%;
+            height: 40px;
+            background-color: transparent;
+            border-top: 1px solid #000000;
+            cursor: pointer;
+
+            display: flex;
+            display: -webkit-flex;
+
+            flex-direction: row;
+            -webkit-flex-direction: row;
+
+            justify-content: space-between;
+            -webkit-justify-content: space-between;
+
+            align-items: center;
+            -webkit-align-items: center;
+        }
+        .listItemName{
+            font-size: 14px;
+            color: #000000;
+            margin-left: 15px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .upTriangle{
+            width: 0;
+            height: 0;
+            margin-right: 15px;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 10px solid #000000;
+        }
+        .downTriangle{
+            width: 0;
+            height: 0;
+            margin-right: 15px;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 10px solid #000000;
+        }
+        .secondListDiv{
+            width: 100%;
+            height: auto;
+        }
+        .secondList {
+            width: 100%;
+            height: auto;
+            background-color: #dddddd;
+            position: relative;
+            top: 0;
+            left: 0;
+        }
+        .secondListShadow {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            pointer-events: none;
+
+            -webkit-box-shadow: 0 0 15px 5px #aaaaaa inset;
+            -moz-box-shadow: 0 0 15px 5px #aaaaaa inset;
+            box-shadow: 0 0 15px 5px #aaaaaa inset;
+        }
+        .trueButton{
+            background-color: #00aaff;
+        }
+        .falseButton{
+            background-color: #ff0000;
+        }
+
+        ._displayNone{
+            display: none;
+        }
+        ._selectBgColor{
+            background-color: #00aaff;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <object id="qdutils" type="application/plugin-QdUtils.dll" style="width:0;height:0; position:absolute; top:-100px;"></object>
+    <div class="mainDiv">
+        <div class="leftListDiv">
+            <div id="classList" class="classListDiv">
+            </div>
+        </div>
+        <div class="tableDiv">
+            <table id="table1"></table>
+        </div>
+    </div>
+</body>
+
+<script>
+    var path = qdutils.GetQuickDrawPath () + 'QdCloud\\Door\\掩门配置表\\';
+    var name_path = path + '五金配件分类数据.cfg';
+    var doorBorderDataPath = path + '掩门参数.cfg';
+    var data = qdutils.ReadStringFromFile(name_path);
+    var doorBorderDataSource = JSON.parse(qdutils.ReadStringFromFile(doorBorderDataPath))
+    var dataSource = (data == '') ? [] : JSON.parse(data);
+    var doorBorderData = [];
+    var dataStr;
+    var treeData;
+    var filter_all = '*';
+    //筛选后生成的新数据源
+    var resetDataSource = [];
+    //筛选出来的数据项下标数组
+    var resetItemIndexArr = [];
+    //是否是原数据源引用
+    var isOldDataSource = true;
+    //存储提取的数据子项
+    var dataItem;
+    var o = {id:'',name:'',bomname:'',l:'',d:'',num:'',door_bh:'',opendirect:'',bktype:''};
+    dataSource.forEach(function (data) {
+       data = extend(data,o);
+    });
+    var directArr = ['上','下','左','右'];
+    if(dataSource.length == 0) {
+        var newObj = {
+            name:'',
+            bomname:'',
+            l:'',
+            d:'',
+            num:'',
+            door_bh:'',
+            opendirect:'',
+            bktype:''
+        };
+        dataSource.push(newObj);
+    }
+    doorBorderData = loopInp(doorBorderDataSource,doorBorderData);
+    var testData = {
+        rewriteTableTitle:{
+            dataSource:{name:'类别',bomname:'分类',l:'长度', d:'宽度',num:'数量',door_bh:'门板厚度',opendirect:'开门方向',bktype:'边框'}
+        },
+        writeLinkData:[{
+            attrName:'bktype',
+            dataSource:doorBorderData,
+            isMoreSelect:false
+        },{
+            attrName:'opendirect',
+            dataSource:directArr,
+            isMoreSelect:true
+        }],
+        showColumn:{
+            attrNameArr:['name','bomname','l','d','num','door_bh','opendirect','bktype']
+        },
+        setColumnOrder:{
+            columnOrder:['name','bomname','l','d','num','door_bh','opendirect','bktype']
+        },
+         setTableWidth:{
+            tableWidth:null,
+            isEqual:true
+        },
+        setTableLineHeight:{
+            lineHeight:'30px'
+        },
+        setPartRows:{
+            partRows:10,
+            isPaging:true
+        },
+        setEditColumn:{
+            editNameArr:'all'
+        },
+        buttonRender:{
+          isCleanAll:false,
+          htmlStr:['<button style="background-color: #47a447;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="dataSave()">保存</button>','<button style="background-color: #ed9c28;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="javascript:location.reload();">取消</button>']
+        }
+    };
+
+    var test = new qd_Table();
+    treeData = initSortData(dataSource,['bomname']);
+    //生成列表
+    initClassTree(treeData,['bomname']);
+    //绑定列表点击事件
+    classListMouseDown();
+    //生成表格
+    test.setData('table1',dataSource,testData);
+    var rightclick = new RightClickText();
+    
+    //设置添加的回调函数
+    test.setAddBtnCallBack(function (data) {
+        if(!isOldDataSource) {
+            data.forEach(function(key,index) {
+                dataSource.push(key);
+                resetItemIndexArr.push(dataSource.length - 1);
+            })
+        }
+    });
+    //设置删除的回调函数
+    test.setDelBtnCallBack(function (delIndexArr) {
+        if(!isOldDataSource){
+            var delIndex;
+            delIndexArr.reverse();
+            while (delIndexArr.length > 0){
+                delIndex = parseInt(delIndexArr.shift());
+                dataSource.splice(resetItemIndexArr[delIndex],1);
+                resetItemIndexArr.splice(delIndex,1);
+                //每当删除了除最后一个子项外的子项，在其之后的所有子项都必须 - 1，否则会导致合并数据错误
+                resetItemIndexArr.forEach(function (item,index) {
+                    if(index > (delIndex - 1)){
+                        resetItemIndexArr[index] = item - 1;
+                    }
+                });
+            }
+        }
+    });
+    var opt1 = {
+        tableId: 'table1',//table的id
+        selectClass: '_qd_tableContentDiv',
+        bgClass: '_global_trSelectBgColor',
+        menuId: 'menu',//menu的id
+        oldDataSource:dataSource
+    };
+    rightclick._initial(opt1);
+    //切换或关闭页面是清空dom节点缓存
+    window.onbeforeunload = function () {
+        test = null;
+        dataSource = null;
+        qdutils = null;
+    };
+
+
+    function dataSave() {
+        var newDataSource = [];
+        console.log(dataSource);
+        dataSource.forEach(function(data){
+            if(data.name!=''){
+                if(data.l == '') data.l = '0';
+                if(data.d == '') data.d = '0';
+                if(data.num == '') data.num = '0';
+                newDataSource.push(data);
+            }
+        })
+        dataStr = JSON.stringify(newDataSource);
+        qdutils.WriteStringToFile(name_path,dataStr);
+        alert('保存成功');
+    }
+
+    /**
+     * 新增函数
+     * 用于判断数组是否存在某数据
+     */
+    function isInArray(itemData,arr) {
+        if(!(arr instanceof Array)){
+            console.log('isInArray的arr参数需为Array');
+            return;
+        }
+        var returnIndex = -1;
+        var index;
+        for(index in arr){
+            if(itemData == arr[index]){
+                returnIndex = index;
+                break;
+            }
+        }
+        return returnIndex;
+    }
+    //去重
+    function loopInp(dataInp,dataOutp) {
+        if(!(dataInp instanceof Array) || !(dataOutp instanceof Array)) {
+            throw new Error('loopInp方法的array参数类型需为Array');
+        }
+        dataInp.forEach(function(data) {
+            if((data.name!== undefined || data.name!= '') && dataOutp.indexOf(data.name) == -1)
+                dataOutp.push(data.name);
+        })
+        return dataOutp;
+    }
+    /**
+     * 新增函数
+     * 分类数据提取初始化
+     */
+    function initSortData(dataSource,levelArr) {
+        if(levelArr.length == 0){
+            console.log('函数initSortData的levelArr是空数组');
+            return;
+        }
+        var returnTreeData;
+        var attrName;
+        var treeItem;
+        if(levelArr.length < 2){
+            returnTreeData = [];
+            returnTreeData.push(filter_all);
+            dataSource.forEach(function (data) {
+                treeItem = data[levelArr[0]];
+                if(isInArray(treeItem,returnTreeData) == -1){
+                    returnTreeData.push(treeItem);
+                }
+            });
+        }else {
+            returnTreeData = {};
+            returnTreeData[filter_all] = [''];
+            dataSource.forEach(function (data) {
+                attrName = data[levelArr[0]];
+                treeItem = data[levelArr[1]];
+                if(returnTreeData[attrName] === undefined){
+                    returnTreeData[attrName] = [];
+                }
+                if (isInArray(treeItem,returnTreeData[attrName]) == -1){
+                    returnTreeData[attrName].push(treeItem);
+                }
+            });
+        }
+        return returnTreeData;
+    }
+    /**
+     * 新增函数
+     * 生成分类列表
+     */
+    function initClassTree(dataTree,levelArr) {
+        if(typeof dataTree != 'object'){
+            console.log('initClassTree函数的dataTree需为object/array');
+            return;
+        }
+        var classListObj = document.getElementById('classList');
+        var classListHTML = '<ul class="classList"></ul>';
+        var listItemHTML = '<li class="listItem"><p class="listItemName"></p><div class="upTriangle _displayNone"></div></li>';
+        var secondListDivHTML = '<div class="secondListDiv _displayNone"><ul class="secondList"></ul></div>';
+        var secondListShadowHTML = '<li class="secondListShadow"></li>';
+        var newInnerHTML;
+        var secondListInnerHTML;
+        var listItemInnerHTML;
+        //最外层</ul>的
+        var lastUlRule = /<\/ul>$/;
+        if(dataTree instanceof Array){
+            newInnerHTML = classListHTML;
+            dataTree.forEach(function (treeItem) {
+                newInnerHTML = newInnerHTML.replace('</ul>',listItemHTML + '</ul>').replace('<p class="listItemName"></p>','<p class="listItemName">' + treeItem + '</p>')
+                    .replace('<li class="listItem">','<li class="listItem" name="' + levelArr[0] + '">');
+            })
+        }else {
+            newInnerHTML = classListHTML;
+            Object.keys(dataTree).forEach(function (treeAttr) {
+                if(dataTree[treeAttr].length == 1 && dataTree[treeAttr][0] == ''){
+                    //先修改列表的子项
+                    listItemInnerHTML = listItemHTML.replace('<p class="listItemName"></p>','<p class="listItemName">' + treeAttr + '</p>')
+                        .replace('<li class="listItem">','<li class="listItem" name="' + levelArr[0] + '">');
+                    //写入列表子项
+                    newInnerHTML = newInnerHTML.replace(lastUlRule,listItemInnerHTML + '</ul>');
+                }else {
+                    listItemInnerHTML = listItemHTML.replace('<p class="listItemName"></p>','<p class="listItemName">' + treeAttr + '</p>')
+                        .replace('<li class="listItem">','<li class="listItem" name="' + levelArr[0] + '">')
+                        .replace('<div class="upTriangle _displayNone"></div>','<div class="upTriangle"></div>');
+                    newInnerHTML = newInnerHTML.replace(lastUlRule,listItemInnerHTML + '</ul>');
+                    secondListInnerHTML = secondListDivHTML;
+                    dataTree[treeAttr].forEach(function (childItem) {
+                        secondListInnerHTML = secondListInnerHTML.replace('</ul>',listItemHTML + '</ul>')
+                            .replace('<li class="listItem">','<li class="listItem" name="' + levelArr[1] + '">')
+                            .replace('<p class="listItemName"></p>','<p class="listItemName">' + childItem + '</p>');
+                    });
+                    secondListInnerHTML = secondListInnerHTML.replace('</ul>',secondListShadowHTML + '</ul>');
+                    newInnerHTML = newInnerHTML.replace(lastUlRule,secondListInnerHTML + '</ul>');
+                }
+            })
+        }
+        classListObj.innerHTML = newInnerHTML;
+    }
+    /**
+     * 新增函数
+     * 绑定分类列表点击事件
+     */
+    function classListMouseDown() {
+        var classListObj = document.getElementById('classList');
+        classListObj.addEventListener('mousedown',function(event){
+            classListEvent(event,dataSource)
+        });
+    }
+    /**
+     * 新增函数
+     * 分类列表点击事件
+     */
+    function classListEvent(event,dataSource) {
+        var nowActObj = event.target;
+        var nowLiObj;
+        var nowUlObj;
+        var nowTriangleObj;
+        var secondListObj;
+        var filterConfig;
+        var firstItemObj;
+        var firstItemName;
+        var secondItemName;
+        if(nowActObj && (nowActObj.tagName.toLowerCase() == 'li' || nowActObj.parentNode.tagName.toLowerCase() == 'li')){
+            nowLiObj = (nowActObj.tagName.toLowerCase() == 'li') ? nowActObj : nowActObj.parentNode;
+            nowUlObj = nowLiObj.parentNode;
+            nowTriangleObj = nowLiObj.lastElementChild;
+            if(nowLiObj.className.indexOf('_selectBgColor') < 0){
+                if(nowLiObj.parentNode.className.indexOf('secondList') < 0){
+                    //如果当前点击对象不是二级列表，就把二级列表都隐藏
+                    initSecondListShow();
+                }
+                //初始化被分类列表的选中状态
+                initSelect();
+                //合并数据源
+                // mergeData(dataSource,resetDataSource,resetItemIndexArr);
+                if(!isOldDataSource){
+                    mergeData(dataSource,resetDataSource,resetItemIndexArr);
+                }else{
+                    resetDataSource = [];
+                }
+                nowLiObj.classList.add('_selectBgColor');
+                filterConfig = {};
+                if(nowUlObj.className.indexOf('secondList') > -1){
+                    firstItemObj = nowUlObj.parentNode.previousElementSibling;
+                    secondItemName = nowLiObj.getAttribute('name');
+                    firstItemName = firstItemObj.getAttribute('name');
+                    filterConfig[firstItemName] = firstItemObj.firstElementChild.textContent;
+                    filterConfig[secondItemName] = nowLiObj.firstElementChild.textContent;
+                }else {
+                    firstItemName = nowLiObj.getAttribute('name');
+                    filterConfig[firstItemName] = nowLiObj.firstElementChild.textContent;
+                }
+                //提取数据和下标集合
+                extractNewDataSource(dataSource,resetDataSource,resetItemIndexArr,filterConfig);
+                if(isOldDataSource) {
+                    resetDataSource = dataSource;
+                }
+                //重写数据并显示表格
+                test.resetData('table1',resetDataSource,testData);
+                var opt2 = {
+                    tableId: 'table1',//table的id
+                    selectClass: '_qd_tableContentDiv',
+                    bgClass: '_global_trSelectBgColor',
+                    menuId: 'menu',//menu的id
+                    oldDataSource:resetDataSource
+                };
+                rightclick._initial(opt2);
+            }
+            if(nowTriangleObj.className.indexOf('_displayNone') < 0){
+                secondListObj = nowLiObj.nextElementSibling;
+                if(secondListObj.className.indexOf('_displayNone') > -1){
+                    secondListObj.classList.remove('_displayNone');
+                    nowTriangleObj.classList.remove('upTriangle');
+                    nowTriangleObj.classList.add('downTriangle');
+                }else {
+                    secondListObj.classList.add('_displayNone');
+                    nowTriangleObj.classList.remove('downTriangle');
+                    nowTriangleObj.classList.add('upTriangle');
+                }
+            }
+        }
+    }
+    /**
+     * 新增函数
+     * 初始化被分类列表的选中状态
+     */
+    function initSelect() {
+        var classListObj = document.getElementById('classList');
+        var liArr = classListObj.getElementsByTagName('li');
+        var liIndex;
+        for (liIndex in liArr){
+            if(!isNaN(liIndex)){
+                if(liArr[liIndex].className.indexOf('_selectBgColor') > -1){
+                    liArr[liIndex].classList.remove('_selectBgColor');
+                    break;
+                }
+            }
+        }
+        classListObj = null;
+        liArr = null;
+    }
+
+    /**
+     * 新增函数
+     * 初始化列表的展开状态
+     */
+    function initSecondListShow() {
+        var classListObj = document.getElementById('classList');
+        var secondListArr = classListObj.getElementsByClassName('secondListDiv');
+        var listKey;
+        var triangleDivObj;
+
+        for (listKey in secondListArr){
+            if(!isNaN(listKey) && secondListArr[listKey].className.indexOf('_displayNone') < 0){
+                secondListArr[listKey].classList.add('_displayNone');
+                triangleDivObj = secondListArr[listKey].previousElementSibling.lastElementChild;
+                triangleDivObj.classList.remove('downTriangle');
+                triangleDivObj.classList.add('upTriangle');
+            }
+        }
+    }
+
+    /**
+     * 新增函数
+     * 合并数据
+     */
+    function mergeData(oldData,newData,filterIndexArr) {
+        var key;
+        var index;
+        while (filterIndexArr.length > 0){
+            key = filterIndexArr.shift();
+            oldData[key] = newData.shift();
+        }
+        for (index in arguments){
+            if(!isNaN(index)){
+                arguments[index] = null;
+            }
+        }
+    }
+
+    /**
+     * 新增函数
+     * 提取新的数据源和被提取子项的下标集合
+     */
+    function extractNewDataSource(oldData,newData,filterIndexArr,filterConfig) {
+        var attrNameArr = Object.keys(filterConfig);
+        var attrKey;
+        for(attrKey in attrNameArr){
+            if(!isNaN(attrKey)){
+                if(filterConfig[attrNameArr[attrKey]] == filter_all){
+                    isOldDataSource = true;
+                    break
+                }else {
+                    isOldDataSource = false;
+                }
+            }
+        }
+        oldData.forEach(function (item,index) {
+            for(attrKey in attrNameArr){
+                if(!isNaN(attrKey)){
+                    if(filterConfig[attrNameArr[attrKey]] == filter_all){
+                        break
+                    }else if(item[attrNameArr[attrKey]] == filterConfig[attrNameArr[attrKey]]){;
+                        newData.push(item);
+                        filterIndexArr.push(index);
+                        break;
+                    }
+                }
+            }
+        })
+    }
+    function extend(o,n) {
+        for(var key in n) if(n.hasOwnProperty(key) && !o.hasOwnProperty(key)) o[key]=n[key];
+        return o;
+    }
+    document.onmousedown = function(ev){
+        if(ev.button == 0) {
+            menu.style.display = 'none';
+        }
+    }
+</script>
+</html>

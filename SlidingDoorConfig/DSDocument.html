@@ -1,0 +1,1753 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>趟门数据导出</title>
+    <!--<link rel="stylesheet" type="text/css" href="css/APIndex.css">-->
+	<script src="http://js.huaguangsoft.com/QdCloud/qdweb/base.js"></script>
+	<link rel="stylesheet" type="text/css" href="http://js.huaguangsoft.com/QdCloud/assets/css/Font-Awesome-3.2.1/css/font-awesome.min.css">
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		html,body,input,p,td,th,button{
+			font-family: 微软雅黑;
+		}
+		.index-container{
+			width: 100%;
+			height: 100%;
+			background-color: #EEEEEE;
+			overflow: hidden;
+		}
+		.browserPic{
+			width: 100%;
+			height: auto;
+			margin-top: 50px;
+		}
+		.headDiv{
+			width: 100%;
+			height: 60px;
+		}
+		.index-title{
+			width: 100%;
+			height: 60px;
+			font-size: 24px;
+			font-weight: bold;
+			text-align: center;
+			line-height: 60px;
+			background-color: #2F5843;
+			color: #ffffff;
+		}
+		.YMFunDiv,.TMFunDiv {
+			width: 100%;
+			height: 200px;
+
+			display: flex;
+			display: -webkit-flex;
+
+			flex-direction: row;
+			-webkit-flex-direction: row;
+
+			justify-content: center;
+			-webkit-justify-content: center;
+
+			align-items: center;
+			-webkit-align-items: center;
+		}
+		.doorTypeIconDiv,.buttonDiv{
+			width: 200px;
+			height: 200px;
+			background-color: transparent;
+
+			display: flex;
+			display: -webkit-flex;
+
+			flex-direction: column;
+			-webkit-flex-direction: column;
+
+			justify-content: center;
+			-webkit-justify-content: center;;
+
+			align-items: center;
+			-webkit-align-items: center;
+		}
+		.buttonDiv{
+			margin-left: 20px;
+		}
+		.doorTypeIcon{
+			width: 120px;
+			height: 120px;
+		}
+		.roundDiv {
+			width: 120px;
+			height: 120px;
+			background-color: #e3e3e3;
+			border-radius: 60px;
+			position: relative;
+			top: 0;
+			left: 0;
+		}
+		.roundBtn {
+			width: 100px;
+			height: 100px;
+			border: transparent;
+			border-radius: 50px;
+			background-color: #eeeeee;
+			position: absolute;
+			outline: none;
+			cursor: pointer;
+			margin: auto;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+
+			-webkit-box-shadow: 0 0 10px 2px #818181;
+			-moz-box-shadow: 0 0 10px 2px #818181;
+			box-shadow: 0 0 10px 2px #818181;
+		}
+		.roundBtn:active{
+			background-color: #d1d1d1;
+		}
+		.footerDiv{
+			width: 100%;
+			height: auto;
+			margin-top: 20px;
+			position: relative;
+		}
+		.state{
+			width: auto;
+			height: auto;
+			position: absolute;
+			margin: auto;
+			right: 100px;
+		}
+		.loadingBgDiv {
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.5);
+			color: #ffffff;
+			position: absolute;
+			margin: auto;
+			top: 0;
+			left: 0;
+			z-index: 10;
+
+			display: flex;
+			display: -webkit-flex;
+
+			flex-direction: row;
+			-webkit-flex-direction: row;
+
+			justify-content: center;
+			-webkit-justify-content: center;
+
+			align-items: center;
+			-webkit-align-items: center;
+		}
+		.loadingTip {
+			font-size: 18px;
+			margin-left: 10px;
+		}
+		/*exlToJson样式*/
+		.exlToJsonBgDiv {
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0,0,0,0.5);
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 10;
+		}
+		.exlToJsonDiv {
+			width: 500px;
+			height: 400px;
+			background-color: #dfdfdf;
+			position: absolute;
+			margin: auto;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+		}
+		.exlToJsonTitleDiv{
+			width: 100%;
+			height: 40px;
+			position: relative;
+			top: 0;
+			left: 0;
+		}
+		.exlToJsonTitleTip{
+			height: 40px;
+			line-height: 40px;
+			margin-left: 10px;
+		}
+		.exlToJsonCloseDiv {
+			width: 50px;
+			height: 40px;
+			cursor: pointer;
+			position: absolute;
+			top: 0;
+			right: 0;
+
+			display: flex;
+			display: -webkit-flex;
+
+			justify-content: center;
+			-webkit-justify-content: center;
+
+			align-items: center;
+			-webkit-align-items: center;
+		}
+		.exlToJsonCloseDiv:hover{
+			background-color: #ff0000;
+			color: #ffffff;
+		}
+		.exlToJsonContentDiv {
+			width: 480px;
+			height: 320px;
+			background-color: #ffffff;
+			overflow-y: hidden;
+			overflow-x: auto;
+			position: absolute;
+			margin: auto;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+		}
+		.exlToJsonListDiv{
+			width: auto;
+			height: 100%;
+			white-space: nowrap;
+
+			/*display: flex;
+			display: -webkit-flex;
+
+			flex-direction: row;
+			-webkit-flex-direction: row;
+
+			justify-content: flex-start;
+			-webkit-justify-content: flex-start;
+
+			align-items: center;
+			-webkit-align-items: center;*/
+		}
+		.exlToJsonList{
+			display: inline-block;
+			width: auto;
+			height: 100%;
+			background-color: transparent;
+			border-width: 0;
+		}
+		.exlToJsonLi{
+			width: auto;
+			border-width: 0;
+			margin-right: 10px;
+
+			display: flex;
+			display: -webkit-flex;
+
+			flex-direction: row;
+			-webkit-flex-direction: row;
+
+			justify-content: flex-start;
+			-webkit-justify-content: flex-start;
+
+			align-items: center;
+			-webkit-align-items: center;
+		}
+		.exlToJsonLiCB{
+			display: block;
+			width: 17px;
+			height: 17px;
+			margin-left: 10px;
+		}
+		.exlToJsonLiName{
+			font-size: 14px;
+			margin-left: 10px;
+			/*点击穿透*/
+			pointer-events: none;
+		}
+		.verticalLine{
+			display: inline-block;
+			width: 0;
+			border-left: 1px solid #aaaaaa;
+		}
+
+		.exlToJsonFooterDiv {
+			width: 100%;
+			height: 40px;
+			position: absolute;
+			margin: auto;
+			left: 0;
+			bottom: 0;
+		}
+		.exlToJsonAllSelDiv {
+			width: 80px;
+			height: 100%;
+			margin-left: 10px;
+
+			display: flex;
+			display: -webkit-flex;
+
+			flex-direction: row;
+			-webkit-flex-direction: row;
+
+			justify-content: flex-start;
+			-webkit-justify-content: flex-start;
+
+			align-items: center;
+			-webkit-align-items: center;
+		}
+		.exlToJsonAllSelCB{
+			display: block;
+			width: 17px;
+			height: 17px;
+			margin-right: 5px;
+		}
+		.exlToJsonBtnDiv {
+			width: auto;
+			height: 100%;
+			position: absolute;
+			top: 0;
+			right: 10px;
+
+			display: flex;
+			display: -webkit-flex;
+
+			justify-content: center;
+			-webkit-justify-content: center;
+
+			align-items: center;
+			-webkit-align-items: center;
+		}
+		.exlToJsonBtn{
+			width: 40px;
+			height: 25px;
+		}
+		.exlToJsonBtn:first-child{
+			margin-right: 10px;
+		}
+		._displayNone{
+			display: none;
+		}
+	</style>
+ </head>
+<body>
+	<object id="qdutils" class="objStyle" type="application/plugin-QdUtils.dll" style="width: 0;height: 0"></object>
+	<div class="index-container">
+		<div class="headDiv">
+			<p class="index-title">趟门,掩门导出数据</p>
+		</div>
+		<div class="browserPic">
+			<div class="TMFunDiv">
+				<div class="doorTypeIconDiv">
+					<img class="doorTypeIcon" src="http://huaguangsoft.com/qdtest/assets/images/TM.png" alt="">
+					<!--<p class="doorTypeName">趟门</p>-->
+				</div>
+				<div class="buttonDiv">
+					<div class="roundDiv">
+						<button class="roundBtn" type="button" onclick="exlToJsonBtnEvent('sliding')">
+							Excel转换
+						</button>
+					</div>
+					<p class="btnTip">趟门配置Excel转换</p>
+				</div>
+				<div class="buttonDiv">
+					<div class="roundDiv">
+						<button class="roundBtn" type="button" onclick="price()">
+							报价导出
+						</button>
+					</div>
+					<p class="btnTip">趟门导出报价</p>
+				</div>
+				<div class="buttonDiv">
+					<div class="roundDiv">
+						<button class="roundBtn" type="button" onclick="OutSlindingINI();">
+							数据生成
+						</button>
+					</div>
+					<p class="btnTip">趟门配置数据生成</p>
+				</div>
+			</div>
+			<div class="YMFunDiv">
+				<div class="doorTypeIconDiv">
+					<img class="doorTypeIcon" src="http://huaguangsoft.com/qdtest/assets/images/YM.png" alt="">
+					<!--<p class="doorTypeName">掩门</p>-->
+				</div>
+				<div class="buttonDiv">
+					<div class="roundDiv">
+						<button class="roundBtn" type="button" onclick="exlToJsonBtnEvent('door')">
+							Excel转换
+						</button>
+					</div>
+					<p class="btnTip">掩门配置Excel转换</p>
+				</div>
+				<div class="buttonDiv">
+					<div class="roundDiv">
+						<button class="roundBtn" type="button" onclick="price2()">
+							报价导出
+						</button>
+					</div>
+					<p class="btnTip">掩门导出报价</p>
+				</div>
+				<div class="buttonDiv">
+					<div class="roundDiv">
+						<button class="roundBtn" type="button" onclick="OutDoorsINI()">
+							数据生成
+						</button>
+					</div>
+					<p class="btnTip">掩门配置数据生成</p>
+				</div>
+			</div>
+		</div>
+		<div class="footerDiv">
+			<div class="state" align="right">
+				<p>提供：<strong style="color: #177DCB">数据导出</strong></p>
+				<p id="date" style="color: #717171"></p>
+			</div>
+		</div>
+	</div>
+	<div id="loading" class="loadingBgDiv _displayNone">
+		<i class="loadingIcon icon-spinner icon-spin icon-2x"></i>
+		<p class="loadingTip">正在作业，请稍等</p>
+	</div>
+	<div id="exlToJson" class="exlToJsonBgDiv _displayNone">
+		<div class="exlToJsonDiv">
+			<div class="exlToJsonTitleDiv">
+				<p class="exlToJsonTitleTip"></p>
+				<div class="exlToJsonCloseDiv" onclick="displayExlToJsonDiv(false)">
+					<i class="icon-remove icon-large"></i>
+				</div>
+			</div>
+			<div class="exlToJsonContentDiv">
+				<div class="exlToJsonListDiv"></div>
+			</div>
+			<div class="exlToJsonFooterDiv">
+				<div class="exlToJsonAllSelDiv">
+					<input class="exlToJsonAllSelCB" type="checkbox" onchange="allSelEvent(this)">
+					<p class="exlToJsonAllSelTip">全选</p>
+				</div>
+				<div class="exlToJsonBtnDiv">
+					<button class="exlToJsonBtn" onclick="exlToJsonTrueEvent()">确定</button>
+					<button class="exlToJsonBtn" onclick="displayExlToJsonDiv(false)">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script>
+	var nowTime = new Date();
+	var dateObj = document.getElementById('date');
+    var path= qdutils.GetQuickDrawPath () + 'QdCloud\\Sliding\\趟门配置表\\';
+    var slidingConfigFilePath = qdutils.GetQuickDrawPath () + 'QdCloud\\Sliding\\';
+    var pathDoor= qdutils.GetQuickDrawPath () + 'QdCloud\\Door\\掩门配置表\\';
+    var doorConfigFilePath = qdutils.GetQuickDrawPath () + 'QdCloud\\Door\\';
+    var time;
+    //存储当前作业的门名称
+	var nowDoorName;
+    //获取要进行exl转换的模块名称集合
+	var exlToJsonModuleNameArr = [];
+	//趟门模块与exl名称的对应数据
+    var slidingFileForExl = {
+        sliding_accessory:'五金配件',
+        sliding_colorclass2:'颜色分类2',
+        sliding_colorclass:'颜色分类',
+        fileversion:'版本号',
+        sliding_doortype:'门类型',
+        sliding_exp:'单门数量类型',
+        sliding_hboxparam:'中横框参数',
+        sliding_param:'趟门参数',
+        sliding_trackparam:'上下轨参数',
+        sliding_udboxparam:'上下横框参数',
+        sliding_vboxparam:'竖框参数',
+        sliding_paneltype:'门板类型',
+        sliding_color:'颜色',
+        sliding_shutterexp:'百叶板计算公式',
+        sliding_myclassgroup:'数据输出分组',
+        sliding_wjbom:'五金配件分类',
+        sliding_wjbomdetail:'五金配件分类数据',
+        sliding_price:'报价',
+        sliding_pricetable:'报价方案',
+        sliding_panelbomdetail:'门板附加物料'
+    };
+    //趟门模块与exl名称的对应数据
+    var doorFileForExl = {
+        doors_accessory:'五金配件',
+        doors_color:'颜色',
+        doors_colorclass:'颜色分类',
+        doors_colorclass2:'颜色分类2',
+        doors_doortype:'门类型',
+        doors_exp:'单门数量类型',
+        doors_handle:'拉手',
+        doors_hboxparam:'中横框参数',
+        doors_hinge:'门铰分类',
+        doors_panelbom:'物料分类',
+        doors_panelbomdetail:'门芯附加物料',
+        doors_paneltype:'门芯类型',
+        doors_param:'掩门参数',
+        doors_price:'报价',
+        doors_pricetable:'报价方案',
+        doors_shutterexp:'百叶板配置',
+        doors_wjbom:'五金配件分类',
+        doors_wjbomdetail:'五金配件分类数据',
+        fileversion:'版本号'
+    };
+    qdutils.LoadLuaFile(qdutils.GetQuickDrawPath()+'QdCloud\\script\\ExcelToJson.lua');
+    qdutils.LoadLuaFile(qdutils.GetQuickDrawPath()+'QdCloud\\script\\WinAPI.lua');
+    qdutils.LoadLuaFile(qdutils.GetQuickDrawPath()+'QdCloud\\script\\ZipFileTool.lua');
+    //更新日期
+    dateObj.innerText = nowTime.getFullYear() + '-' + (nowTime.getMonth() + 1) + '-' + nowTime.getDate();
+    //释放内存
+    nowTime = null;
+    dateObj = null;
+    //load页显示
+    function loadingShow() {
+		var loading = document.getElementById('loading');
+		loading.classList.remove('_displayNone');
+		loading = null;
+    }
+    //load页隐藏
+    function loadingHidden() {
+		var loading = document.getElementById('loading');
+		loading.classList.add('_displayNone');
+		loading = null;
+    }
+    //数组查找函数
+	function inArray(item,array) {
+		var returnIndex = -1;
+		for(var index in array){
+		    if(!isNaN(index) && array[index] == item){
+		        returnIndex = index;
+		        break;
+			}
+		}
+		return returnIndex;
+    }
+    //新增函数处理特殊字符（将正则表达式里的特殊符号进行转义）
+    function escapeString(str) {
+        var returnStr;
+        var specialCharRule = /(\*|\.|\?|\\|\+|\$|\^|\[|\]|\(|\)|\{|\}|\||\/)/g;
+        returnStr = str.replace(specialCharRule,function (char) {
+            return '\\' + char;
+        });
+        return returnStr;
+    }
+    //新增函数：exl转换按钮点击事件
+	function exlToJsonBtnEvent(doorName) {
+        var data = [];
+        var truePath;
+        var trueExlFileData;
+        var allFile;
+        var file;
+        var outname;
+        var filename;
+        var shortTimeSave;
+
+        if(doorName == 'sliding'){
+            truePath = path;
+            trueExlFileData = slidingFileForExl;
+		}else if(doorName == 'door'){
+            truePath = pathDoor;
+            trueExlFileData = doorFileForExl;
+		}
+		allFile = JSON.parse(qdutils.attrdir2json2(truePath));
+		for(var index in allFile) {
+            if (!isNaN(index)) {
+                file = allFile[index].Path;
+                outname = file.split('/');
+                filename = outname[outname.length - 1];
+                if(filename.indexOf('.xls') > -1 || filename.indexOf('.xlsx') > -1){
+                    shortTimeSave = filename.substring(0, filename.indexOf('.'));
+                    if(trueExlFileData[shortTimeSave] !== undefined){
+                        data.push(trueExlFileData[shortTimeSave]);
+                    }
+				}
+            }
+        }
+        initExlToJsonDiv(data,doorName);
+		displayExlToJsonDiv(true);
+    }
+
+    //新增函数：用于初始化导出列表
+	function initExlToJsonDiv(data,doorName) {
+        //存储内容列表集合
+        var liNameArr;
+        //存储列表html
+        var ulHtml = '<ul class="exlToJsonList"></ul>';
+        //存储列表子项html
+        var liHtml = '<li class="exlToJsonLi"><input class="exlToJsonLiCB" type="checkbox" onchange="aloneSelEvent(this)"><p class="exlToJsonLiName"></p></li>';
+        //存储分隔线html
+        var dividingLine = '<div class="verticalLine" style="height: 90%"></div>';
+        //存储每个列表存储的子项数
+		var itemNum = 5;
+		//存储写入的html;
+		var newInnerHtml = '';
+		//获取exl转换节点对象
+		var exlToJsonDiv = document.getElementById('exlToJson');
+		//获取排头节点对象
+		var pObj = exlToJsonDiv.getElementsByClassName('exlToJsonTitleTip')[0];
+		//获取list的父框节点对象
+		var listFaDiv = exlToJsonDiv.getElementsByClassName('exlToJsonListDiv')[0];
+		//暂时存储
+		var shortTimeSave;
+		//存储li头标签正则表达式
+		var liHeadLabel = /<li[^>]*>/;
+		//中文名称
+		var cnName;
+
+		//初始化模块名称集合
+        exlToJsonModuleNameArr = [];
+
+        //记录当前的door名称
+        nowDoorName = doorName;
+
+        //记录中文名称
+		cnName = (doorName == 'sliding') ? '趟门' : (doorName == 'door') ? '掩门' : '' ;
+
+		//获取内容列表集合
+		if(data instanceof Array){
+		    liNameArr = data;
+		}else if(typeof data == "object"){
+		    liNameArr = Object.keys(data);
+		}
+		//修改排头
+        pObj.innerText = cnName  + '的Exl转换列表';
+		//根据数据写入列表
+		liNameArr.forEach(function (item,index) {
+			if(index % itemNum == 0){
+			    if(shortTimeSave === undefined){
+			        shortTimeSave = ulHtml;
+				}else {
+                    newInnerHtml += shortTimeSave;
+                    shortTimeSave = dividingLine + ulHtml;
+				}
+			}
+            shortTimeSave = shortTimeSave.replace('</ul>',function () {
+                return liHtml.replace('</p>',item + '</p>')
+					.replace(liHeadLabel,function (labelStr) {
+						return labelStr.replace('>',' style="height:'+ parseInt(100/itemNum) +'%;">');
+                    }) + '</ul>';
+            })
+        });
+		//将不足一周期的shortTimeSave加入newInnerHtml
+		newInnerHtml += shortTimeSave;
+		//清空列表框
+        listFaDiv.innerHTML = '';
+		//将newInnerHtml写入列表框
+        listFaDiv.innerHTML = newInnerHtml;
+        //赋予点击事件
+        exlToJsonEvent();
+    }
+    //新增函数：用于改变exl转换列表的显示状态
+	function displayExlToJsonDiv(isShow) {
+		//获取exl转换节点对象
+        var exlToJsonDiv = document.getElementById('exlToJson');
+		if(isShow){
+		    if(exlToJsonDiv.className.indexOf('_displayNone') > -1){
+                exlToJsonDiv.classList.remove('_displayNone');
+			}
+		}else {
+		    if(exlToJsonDiv.className.indexOf('_displayNone') < 0){
+		        exlToJsonDiv.classList.add('_displayNone');
+			}
+		}
+    }
+    //新增函数：给exl转换列表绑定事件
+	function exlToJsonEvent() {
+        //获取exl转换节点对象
+        var exlToJsonDiv = document.getElementById('exlToJson');
+        //获取list的父框节点对象
+        var listFaDiv = exlToJsonDiv.getElementsByClassName('exlToJsonListDiv')[0];
+		//存储当前点击对象
+		var actObj;
+		//存储当前复选框对象
+		var nowCBObj;
+		//绑定点击事件
+		if(listFaDiv.onmousedown == null){
+            listFaDiv.onmousedown = function (event) {
+                actObj = event.target;
+                if(actObj && event.button == 0 && actObj.tagName.toLowerCase() == 'li'){
+                    nowCBObj = actObj.getElementsByClassName('exlToJsonLiCB')[0];
+                    nowCBObj.checked = !nowCBObj.checked;
+                    nowCBObj.onchange();
+				}
+            }
+		}
+        exlToJsonDiv = null;
+        listFaDiv = null;
+    }
+    //新增函数：单选复选框点击事件
+	function aloneSelEvent(_this) {
+        //获取exl转换节点对象
+        var exlToJsonDiv = document.getElementById('exlToJson');
+        //获取list的父框节点对象
+        var listFaDiv = exlToJsonDiv.getElementsByClassName('exlToJsonListDiv')[0];
+        //获取list的父框节点对象
+        var allSelCBObj = exlToJsonDiv.getElementsByClassName('exlToJsonAllSelCB')[0];
+        //是否全选
+		var isAllSelect = true;
+		//获取模块名称
+		var moduleName = _this.nextElementSibling.textContent;
+		//获取列表子项数
+		var liNum = listFaDiv.getElementsByClassName('exlToJsonLi').length;
+
+		if(_this.checked){
+            exlToJsonModuleNameArr.push(moduleName);
+            if(liNum > exlToJsonModuleNameArr.length){
+                isAllSelect = false;
+			}
+		}else {
+		    isAllSelect = false;
+		    //删除一个子项
+            exlToJsonModuleNameArr.splice(inArray(moduleName,exlToJsonModuleNameArr),1);
+		}
+        allSelCBObj.checked = isAllSelect;
+
+        exlToJsonDiv = null;
+        listFaDiv = null;
+        allSelCBObj = null;
+    }
+    //新增函数：全选复选框点击事件
+	function allSelEvent(_this) {
+        //获取exl转换节点对象
+        var exlToJsonDiv = document.getElementById('exlToJson');
+        //获取list的父框节点对象
+        var listFaDiv = exlToJsonDiv.getElementsByClassName('exlToJsonListDiv')[0];
+        //获取所有单选复选框
+		var aloneSelArr = listFaDiv.getElementsByClassName('exlToJsonLiCB');
+		//获取模块名
+		var moduleName;
+
+        if(aloneSelArr.length != 0){
+            for (var index in aloneSelArr){
+                if(!isNaN(index)){
+                    aloneSelArr[index].checked = _this.checked;
+                    moduleName = aloneSelArr[index].nextElementSibling.textContent;
+                    if(_this.checked){
+                        exlToJsonModuleNameArr.push(moduleName);
+                    }else {
+                        exlToJsonModuleNameArr.splice(inArray(moduleName),1);
+                    }
+                }
+            }
+        }
+    }
+    //exl转转确认事件
+	function exlToJsonTrueEvent() {
+        if(nowDoorName == 'sliding'){
+            excelToJson();
+		}else if(nowDoorName == 'door'){
+            excelToJson2();
+		}
+		displayExlToJsonDiv(false);
+    }
+
+    function excelToJson() {
+        loadingShow();
+        time = setTimeout(function(){
+            OutExcelJson();
+            loadingHidden();
+            clearTimeout(time);
+		},200);
+    }
+    function OutExcelJson() {
+        var paths;// = document.getElementById("pathss").value;
+        paths = path;
+        //var filePathName  = qdutils.ShowOpenFileDialog('文件名', '*xlsx.|*.xlsx|*.xls|*.xls');
+        //filePathName = 'C:\\Users\\zjr\\Desktop\\掩门拆分配置问题\\sliding_colorclass.xls'
+        var allfile = qdutils.attrdir2json2(paths);
+        var files = JSON.parse(allfile);
+        var shortTimeSave;
+        var trueExlName;
+        var trueCfgName;
+        for(var i =0 ;i < files.length; i++)
+        {
+            var file = files[i].Path;
+            var outname = file.split('/');
+            var filename = outname[outname.length-1] ;
+            file = file.replace('//','/');
+            var Outfilename = file ;
+            var bret = false;
+            if(filename.indexOf('.xlsx') > -1 || filename.indexOf('.xls') > -1){
+                shortTimeSave = filename.substring(0,filename.indexOf('.'));
+                if(slidingFileForExl[shortTimeSave] !== undefined && inArray(slidingFileForExl[shortTimeSave],exlToJsonModuleNameArr) > -1){
+                    trueExlName = '/' + filename;
+                    trueCfgName = '/' + slidingFileForExl[shortTimeSave] + '.cfg';
+//                    console.log(filename,slidingFileForExl[shortTimeSave]);
+                    Outfilename = Outfilename.replace(trueExlName,trueCfgName);
+                    bret = ReadOneExcel2Json(file,Outfilename);
+				}
+			}
+            if(bret)
+            {
+                console.log(Outfilename+ '转换成功');
+            }
+        }
+        alert('转换结束');
+    }
+    function ReadOneExcel2Json(filePathName,outname) {
+        if(filePathName != '')
+        {
+            var strjson = qdutils.ExcelToJson(filePathName);
+            if(strjson == -1)
+            {
+                return false;
+            }
+            strjson = strjson.replace(/\\/g,'/');
+            //var outname = filePathName.split('.');
+            var Json = JSON.parse(strjson);
+            var Sheet = Json.excel;
+            var ALLJsonData =[];
+            for(var i =0 ;i< Sheet.length; i++) // 子表个数
+            {
+                var oneSheet = Sheet[i];
+                for (var key in oneSheet){//遍历键值对
+                    var Rows = oneSheet[key]; //所有的行对象
+                    var title =[]; //
+                    if(Rows.length >= 1) // 获取所有的行的标题名称
+                    {
+                        for (var tkey in Rows[0])
+                        {
+                            title.push(Rows[0][tkey]);
+                        }
+                    }
+                    for( var j=1; j< Rows.length; j++)
+                    {
+                        var row = Rows[j];
+                        var k =0;
+                        var data={};
+                        for (var rkey in row)
+                        {
+                            data[title[k]] = row[rkey];
+                            k++;
+                        }
+                        ALLJsonData.push(data);
+                    }
+                }
+            }
+            qdutils.WriteStringToFile(outname, JSON.stringify(ALLJsonData));
+            return true;
+        }
+    }
+
+    function price() {
+		loadingShow();
+		time = setTimeout(function () {
+            ExtoPriceJS();
+			loadingHidden();
+			clearTimeout(time);
+        },200);
+    }
+    function ExtoPriceJS() {
+        qdutils.LoadLuaFile(qdutils.GetQuickDrawPath()+'QdCloud\\script\\ExcelToJson.lua');
+        var paths;// = document.getElementById("pathss").value;
+        paths = path;
+        var filePathName = paths + 'sliding_price.xlsx'
+        var Outfilename = paths+'趟门报价.cfg'
+
+        var bret = ReadOneExcel2Json(filePathName,Outfilename);
+        if(bret)
+        {
+            alert('导出报价数据成功！')
+        }
+        else
+        {
+            filePathName = paths + 'sliding_price.xls'
+            Outfilename = paths+'趟门报价.cfg'
+
+            bret = ReadOneExcel2Json(filePathName,Outfilename);
+            if(bret)
+            {
+                alert('导出报价数据成功！');
+            }
+            else
+            {
+                alert("导出失败");
+            }
+        }
+    }
+
+    function excelToJson2() {
+		loadingShow();
+		time = setTimeout(function () {
+            OutExcelJson2();
+            loadingHidden();
+            clearTimeout(time);
+        },200);
+    }
+    function OutExcelJson2() {
+        qdutils.LoadLuaFile(qdutils.GetQuickDrawPath()+'QdCloud\\script\\ExcelToJson.lua');
+        qdutils.LoadLuaFile(qdutils.GetQuickDrawPath()+'QdCloud\\script\\WinAPI.lua');
+        qdutils.LoadLuaFile(qdutils.GetQuickDrawPath()+'QdCloud\\script\\ZipFileTool.lua');
+
+        var paths ;//= document.getElementById("pathsDoors").value;
+        paths = pathDoor;
+        //var filePathName  = qdutils.ShowOpenFileDialog('文件名', '*xlsx.|*.xlsx|*.xls|*.xls');
+        //filePathName = 'C:\\Users\\zjr\\Desktop\\掩门拆分配置问题\\sliding_colorclass.xls'
+        var allfile = qdutils.attrdir2json2(paths);
+        var files = JSON.parse(allfile);
+        var shortTimeSave;
+        var trueExlName;
+        var trueCfgName;
+        for(var i =0 ;i < files.length; i++)
+        {
+            var file = files[i].Path;
+            var outname = file.split('/');
+            var filename = outname[outname.length-1] ;
+            file = file.replace('//','/');
+            var Outfilename = file ;
+            var bret = false;
+            if(filename.indexOf('.xlsx') > -1 || filename.indexOf('.xls') > -1){
+                shortTimeSave = filename.substring(0,filename.indexOf('.'));
+                if(doorFileForExl[shortTimeSave] !== undefined && inArray(doorFileForExl[shortTimeSave],exlToJsonModuleNameArr) > -1){
+                    trueExlName = '/' + filename;
+                    trueCfgName = '/' + doorFileForExl[shortTimeSave] + '.cfg';
+                    Outfilename = Outfilename.replace(trueExlName,trueCfgName);
+                    bret = ReadOneExcel2Json(file,Outfilename);
+				}
+			}
+            if(bret) {
+                console.log(Outfilename+ '转换成功');
+            }
+        }
+        alert('转换结束');
+    }
+
+    function price2() {
+		loadingShow();
+		time = setTimeout(function () {
+            ExtoPriceDoorJS();
+            loadingHidden();
+            clearTimeout(time);
+        },200);
+    }
+    function ExtoPriceDoorJS() {
+        qdutils.LoadLuaFile(qdutils.GetQuickDrawPath()+'QdCloud\\script\\ExcelToJson.lua');
+        var paths ;//= document.getElementById("pathsDoors").value;
+        paths = pathDoor;
+        var filePathName = paths + 'doors_price.xlsx'
+        var Outfilename = paths+'掩门报价.cfg'
+
+        var bret = ReadOneExcel2Json(filePathName,Outfilename);
+        if(bret)
+        {
+            alert('导出报价数据成功！')
+        }
+        else
+        {
+            filePathName = paths + 'doors_price.xls'
+            Outfilename = paths+'掩门报价.cfg'
+
+            bret = ReadOneExcel2Json(filePathName,Outfilename);
+            if(bret)
+            {
+                alert('导出报价数据成功！');
+            }
+            else
+            {
+                alert("导出失败");
+            }
+        }
+    }
+
+    function OutSlindingINI() {
+        loadingShow();
+        //var path= qdutils.GetQuickDrawPath () + 'QdCloud\\Sliding\\趟门配置表\\23\\';
+		time = setTimeout(function () {
+            OutSilindingJosn(path);
+            loadingHidden();
+            clearTimeout(time);
+        },200);
+
+    }
+
+    function OutDoorsINI() {
+        loadingShow();
+        time = setTimeout(function () {
+            OutDoorJson(pathDoor);
+            loadingHidden();
+            clearTimeout(time);
+        },200);
+    }
+    function OutDoorJson(path)
+    {
+        function ReadDoorNum() // 单门数量类型
+        {
+            var data = qdutils.ReadStringFromFile(path + '单门数量类型.cfg');
+            return JSON.parse(data);
+        }
+        function ReadDoorHandle() // 读取拉手
+        {
+            var data = qdutils.ReadStringFromFile(path + '拉手.cfg');
+            return JSON.parse(data);
+        }
+        function ReadDoorMenJiao() // 门铰
+        {
+            var data = qdutils.ReadStringFromFile(path + '门铰分类.cfg');
+            return JSON.parse(data);
+        }
+        function ReadDoorMenLeix() // 门类型
+        {
+            var data = qdutils.ReadStringFromFile(path + '门类型.cfg');
+            return JSON.parse(data);
+        }
+        function ReadDoorMenxin() // 门芯类型
+        {
+            var data = qdutils.ReadStringFromFile(path + '门芯类型.cfg');
+            return JSON.parse(data);
+        }
+        function ReadDoorPj() // 配件
+        {
+            var data = qdutils.ReadStringFromFile(path + '五金配件.cfg');
+            return JSON.parse(data);
+        }
+        function ReadDoorColor() // 颜色分类
+        {
+            var data = qdutils.ReadStringFromFile(path + '颜色分类.cfg');
+            return JSON.parse(data);
+        }
+        function ReadDoorColor2() // 颜色分类2
+        {
+            var data = qdutils.ReadStringFromFile(path + '颜色分类2.cfg');
+            return JSON.parse(data);
+        }
+        function ReadDoorPareas() // 掩门参数
+        {
+            var data = qdutils.ReadStringFromFile(path + '掩门参数.cfg');
+            return JSON.parse(data);
+        }
+        function ReadDoorMHeng() // 中横框参数
+        {
+            var data = qdutils.ReadStringFromFile(path + '中横框参数.cfg');
+            return JSON.parse(data);
+        }
+        var DoorNum = ReadDoorNum();
+        var DoorHandle = ReadDoorHandle();
+        var DoorMenJiao = ReadDoorMenJiao();
+        var DoorMenLeix = ReadDoorMenLeix();
+        var DoorMenxin = ReadDoorMenxin();
+        var DoorPj = ReadDoorPj();
+        var DoorColor = ReadDoorColor();
+        var DoorColor2 = ReadDoorColor2();
+        var DoorPareas = ReadDoorPareas();
+        var DoorMHeng = ReadDoorMHeng();
+		//暂时存储
+		var shortTimeSave;
+
+        var AllJSonData={};
+        // 添加门扇数
+        var AsdorNu =[];
+        for(var index in DoorNum) {
+            if(!isNaN(index)){
+                var newData = {};
+                newData.Name = DoorNum[index].name;
+                newData.num = DoorNum[index].doornum;
+                AsdorNu.push(newData);
+			};
+        }
+        AllJSonData.单门数量类型 = AsdorNu;
+
+        // 添加门类型
+        var DoorTypes = [];
+        for(var  i = 0 ;i< DoorMenLeix.length; i++ )
+        {
+            var OneType ={};
+            OneType.Name = DoorMenLeix[i].name;
+            OneType.预览图 = DoorMenLeix[i].name + '.jpg';
+            OneType.Type = DoorMenLeix[i].isframe;// 是否带框
+            // 添加门类型颜色
+            var stKMFXC= DoorMenLeix[i].颜色;
+            if(stKMFXC !== undefined){
+                var TempSpC = stKMFXC.split(',');
+                var tmpFxc = [];
+                for(var p =0 ;p < TempSpC.length; p++)
+                {
+                    var OneFx =
+                        {
+                            "Name":TempSpC[p],
+                            "预览图":TempSpC[p]+".jpg"
+                        }
+                    tmpFxc.push(OneFx);
+                }
+                OneType.颜色 = tmpFxc;// 新增数据
+			}
+//			else {
+//                console.log('门类型没有“颜色”数据，请到门类型的配置页面完善数据')
+//            }
+
+
+            var OneDPj=[]; // 配件
+            for(var j =0; j< DoorPj.length; j++)
+            {
+                var str = DoorPj[j].门类型;
+//              <!-- var patt1 = new RegExp(OneType.Name+","); -->
+//              <!-- var result = patt1.test(str);			 -->
+//              <!-- if(result) -->
+                if(str !== undefined){
+//                    var astr = OneType.Name+",";
+//                    var result  = str.indexOf(astr);
+                    var astr = OneType.Name;
+                    var result;
+
+                    shortTimeSave = str.split(',');
+                    result = inArray(astr,shortTimeSave);
+//                    console.log(shortTimeSave,astr);
+
+                    if(result>=0)
+                    {
+                        var pj = {
+                            "Name":DoorPj[j].name,
+                            "数量":DoorPj[j].数量,    // 新增数据
+                            "预览图":DoorPj[j].name+".jpg"
+                        }
+                        OneDPj.push(pj);
+                    }
+                }
+//                else {
+//                    console.log('配件没哟“门类型”数据，请到配件的配置页面完善数据');
+//                }
+            }
+            OneType.配件 = OneDPj;//
+
+
+            // 添加门框类型
+            var Waikuan=[];
+            for(var j = 0; j< DoorPareas.length; j++)//掩门参数
+            {
+                if(DoorPareas[j].doorstype == OneType.Name)// 门类型 下的边框
+                {
+                    var OneWaikuan ={};
+                    OneWaikuan.Name = DoorPareas[j].name;
+                    OneWaikuan.预览图 = DoorPareas[j].name + '.jpg';
+                    OneWaikuan.Type = (DoorMenLeix[i].isframe == "TRUE")? 1:0;// 为了 和 数据格式保持一致， 每一种门类型 是否带框 变成 每一致门框是否带框
+					OneWaikuan.udholepos = DoorPareas[j].udholepos;
+                    OneWaikuan.groupName = DoorPareas[j].groupname == '' ? '未分组' : DoorPareas[j].groupname;
+                    // 添加颜色
+                    var Bkcolor = AddDoorColor2(DoorColor2, OneWaikuan.Name);
+                    OneWaikuan.颜色= Bkcolor;
+                    var ZhongHeng = [];
+                    for(var k =0; k < DoorMHeng.length; k++){
+                        var str = DoorMHeng[k].边框类型;  //新增数据
+                        //var patt1 = new RegExp(OneWaikuan.Name+",");
+                        //var result = patt1.test(str);
+                        if(str !== undefined){
+//                            var astr = OneWaikuan.Name+",";
+//                            var result  = str.indexOf(astr);
+							//获取掩门参数名称
+                            var astr = OneWaikuan.Name;
+                            var result;
+
+                            shortTimeSave = str.split(',');
+                            result = inArray(astr,shortTimeSave);
+
+                            if(result>=0)
+                            {
+                                var Mheng ={
+                                    "Name": DoorMHeng[k].name,
+                                    "预览图": DoorMHeng[k].name+".jpg",
+                                    "颜色": [],
+                                    holepos:DoorMHeng[k].holepos,
+                                    holenum:DoorMHeng[k].holenum,
+                                    holecap:DoorMHeng[k].holecap
+                                };
+                                var MHengC = AddDoorColor(DoorColor,"中横框",DoorMHeng[k].name);
+                                Mheng.颜色= MHengC;
+                                ZhongHeng.push(Mheng);
+                            }
+                        }
+//                        else {
+//                            console.log('中横框参数没有“边框类型”数据，请到中横框参数的配置页面完善数据');
+//                        }
+                    }
+                    // 中横类型
+                    OneWaikuan.中横类型 = ZhongHeng;
+
+                    // 开门方向
+                    // 新增数据
+                    var stKMFX= DoorPareas[j].开门方向;
+                    if(stKMFX !== undefined){
+                        var TempSp = stKMFX.split(',');
+                        var tmpFx = [];
+                        for(var p =0 ;p < TempSp.length; p++)
+                        {
+                            var OneFx =
+                                {
+                                    "Name":TempSp[p]
+                                }
+                            tmpFx.push(OneFx);
+                        }
+                        OneWaikuan.开门方向 =tmpFx;
+                    }
+//                    else {
+//                        console.log('掩门参数没有“开门方向”的数据，请到掩门参数的配置页面完善数据');
+//                    }
+                    // 开门方向 跟 拉手
+                    // 拉手
+                    var LsDatas =[];
+                    for(var k =0; k < DoorHandle.length; k++)
+                    {
+                        var str = DoorHandle[k].边框类型;  //新增数据
+
+                        if(str !== undefined){
+                            //var patt1 = new RegExp(OneWaikuan.Name+",");
+                            //var result = patt1.test(str);
+//                            var astr = OneWaikuan.Name+",";
+//                            var result  = str.indexOf(astr);
+
+                            var astr = OneWaikuan.Name;
+                            var result;
+
+                            shortTimeSave = str.split(',');
+                            result = inArray(astr,shortTimeSave);
+
+                            if(result>=0)
+                            {
+                                var atemp = {
+                                    "Name":DoorHandle[k].name,
+                                    "预览图": DoorHandle[k].name+".jpg"
+                                }
+                                LsDatas.push(atemp);
+                            }
+                        }
+//                        else {
+//                            console.log('拉手没有“边框类型”数据，请到拉手配置页面完善数据');
+//                        }
+                    }
+                    OneWaikuan.拉手 =LsDatas;
+
+                    //门铰
+                    var Menjiao =[];
+                    for(var k =0 ; k< DoorMenJiao.length ; k++)
+                    {
+                        var str = DoorMenJiao[k].边框类型;  //新增数据
+                        //var patt1 = new RegExp(OneWaikuan.Name+",");
+
+                        //var result = patt1.test(str);
+                        if(str !== undefined){
+//                            var astr = OneWaikuan.Name+",";
+//                            var result  = str.indexOf(astr);
+
+                            var astr = OneWaikuan.Name;
+                            var result;
+
+                            shortTimeSave = str.split(',');
+                            result = inArray(astr,shortTimeSave);
+
+                            if(result>=0)
+                            {
+                                var atmp= {
+                                    "Name": DoorMenJiao[k].name,
+                                    "预览图": DoorMenJiao[k].name+".jpg",
+                                    "安装方式": []
+                                }
+                                var stKMFX= DoorMenJiao[k].安装方式; // 新增数据
+                                var TempSp = stKMFX.split(',');
+                                var tmpFx = [];
+                                for(var p =0 ;p < TempSp.length; p++)
+                                {
+                                    var OneFx =
+                                        {
+                                            "Name":TempSp[p]
+                                        }
+                                    tmpFx.push(OneFx);
+                                }
+                                atmp.安装方式 = tmpFx;
+                                Menjiao.push(atmp);
+                            }
+                        }
+//                        else {
+//                            console.log('门铰没有“边框类型”的数据，请到门铰配置页面完成配置');
+//                        }
+                    }
+                    OneWaikuan.门铰 =Menjiao;
+                    // 门芯
+                    var MenxinS=AddDoorMenXin(DoorColor,DoorMenxin,OneWaikuan.Name);
+                    OneWaikuan.门芯 =MenxinS;
+
+                    // 默认  -- 需要新增默认值配置
+                    var Wkcur = {
+                        "中横": DoorPareas[j].hboxname,
+                        "中横颜色": DoorPareas[j].中横颜色,
+                        "开门方向": DoorPareas[j].开门方向,
+                        "拉手": DoorPareas[j].handle,
+                        "门芯类型":DoorPareas[j].paneltype,
+                        "门芯颜色": DoorPareas[j].门芯颜色,
+                        "门铰": DoorPareas[j].门铰分类,
+                        "颜色": DoorPareas[j].颜色
+                    }
+                    OneWaikuan.默认 = Wkcur;
+                    Waikuan.push(OneWaikuan);
+                }
+            }
+            OneType.门框类型 = Waikuan;
+            console.log(Waikuan);
+            // 添加默认
+            var def = {
+                "门框": DoorMenLeix[i].默认门框,
+                "门类型颜色": DoorMenLeix[i].默认颜色
+            }
+            OneType.默认 = def;// 新增数据
+            DoorTypes.push(OneType);
+        }
+        AllJSonData.门类型 = DoorTypes;
+
+        var ALLstrdata = JSON.stringify(AllJSonData);
+        console.log(doorConfigFilePath+'Door.txt');
+        qdutils.WriteStringToFile(doorConfigFilePath+'Door.txt', ALLstrdata);
+        alert('导出成功');
+    }
+    function AddDoorMenXin(DoorColor,strMlMenBan, type)
+    {
+        var AllMenXin=[];
+        for(var i = 0 ;i < strMlMenBan.length; i++)
+        {
+            if(strMlMenBan[i].bktype == type )
+            {
+                var OneMenBan ={
+                    "Name": strMlMenBan[i].name,
+                    "groupName":strMlMenBan[i].groupname == "" ? "未分组" : strMlMenBan[i].groupname, // 新增数据
+                    "cutup": (strMlMenBan[i].iswhole == 'TRUE') ? '不可分割' : '可分割',
+                    "预览图":strMlMenBan[i].name+".jpg",
+                    "高度": strMlMenBan[i].Eheight,//'1|700|1400|2100-2|0|2440-3|0|2440|100-4|1/2|1/3|1/4';
+                    "纹路":strMlMenBan[i].direct,
+                    "颜色": [],
+                    "颜色2":[]
+                }
+                OneMenBan.颜色 = AddDoorColor(DoorColor,"门芯",OneMenBan.Name);
+                OneMenBan.颜色2 = AddDoorColor3(DoorColor,"门芯",OneMenBan.Name);
+                AllMenXin.push(OneMenBan);
+            }
+        }
+        return AllMenXin;
+    }
+    function AddDoorColor2(strMlColor2, name)
+    {
+        var allcolor =[];
+        for(var i = 0;i< strMlColor2.length; i++ )
+        {
+            if(name == strMlColor2[i].bktype)// 类型
+            {
+                var OneColor = {};
+                OneColor.Name = strMlColor2[i].color;
+                OneColor.预览图 = strMlColor2[i].color + '.jpg';
+                allcolor.push(OneColor);
+            }
+        }
+        return allcolor;
+    }
+    function AddDoorColor(strMlColor, type, name)
+    {
+        var allcolor =[];
+        for(var i = 0;i< strMlColor.length; i++ )
+        {
+            if(type == strMlColor[i].myclass && name == strMlColor[i].mat)// 类型
+            {
+                var OneColor = {};
+                OneColor.Name = strMlColor[i].color;
+                OneColor.预览图 = strMlColor[i].color + '.jpg';
+                if(type == '门芯')
+                {
+                    OneColor.height = strMlColor[i].门框类型;//'1|700|1400|2100-2|0|2440-3|0|2440|100-4|1/2|1/3|1/4';
+                }
+                allcolor.push(OneColor);
+            }
+        }
+        return allcolor;
+    }
+    function AddDoorColor3(strMlColor, type, name)
+    {
+        var allcolor =[];
+        for(var i = 0;i< strMlColor.length; i++ )
+        {
+            if(type == strMlColor[i].myclass && name == strMlColor[i].mat)// 类型
+            {
+                if(strMlColor[i].color2 != '') {
+                    var OneColor = {};
+                    OneColor.Name = strMlColor[i].color2;
+                    OneColor.预览图 = strMlColor[i].color2 + '.jpg';
+                    if(type == '门芯')
+                    {
+                        OneColor.height = strMlColor[i].门框类型;//'1|700|1400|2100-2|0|2440-3|0|2440|100-4|1/2|1/3|1/4';
+                    }
+                    allcolor.push(OneColor);
+                }
+            }
+        }
+        return allcolor;
+    }
+    function OutSilindingJosn(path)
+    {
+        var strMlLeix = ReadMenLeix();
+        var strMlWaikuan = ReaderMenWaikuan();
+        var strMlSanshu = ReadMenSanshu();
+        var strMlDaoGui = ReadSxDaoGui();
+        var strMlZhongHeng = ReadZhongHeng();
+        var strMlMenShxiaHeng = ReadMenSXHeng();
+        //var strMlMenBan = ReadMenBan();
+        var strMlPeijian = ReadPeijian();
+        //var strMlColor = ReadColor();
+        //var strMlColor2 = ReadColor2();
+        //获取暂时存储数据
+        var shortTimeSave;
+
+        var AllJSonData={};
+        // 添加门扇数
+        var AsdorNu =[];
+        //存储名称
+		var itemName;
+        for(var index in strMlSanshu) {
+            if(!isNaN(index)){
+                var newData = {};
+                newData.name = strMlSanshu[index].name;
+                newData.num = strMlSanshu[index].doornum;
+                AsdorNu.push(newData);
+			}
+        }
+        AllJSonData.simplegatenumbertype = AsdorNu;
+
+        var Type = [];
+        for(var  i = 0 ;i< strMlLeix.length; i++ )
+        {
+
+            var OneType ={};
+            OneType.name = strMlLeix[i].name;
+            OneType.image = strMlLeix[i].name + '.jpg';
+            OneType.type = 0;
+            var Waikuan=[];
+            for(var j = 0; j< strMlWaikuan.length; j++)//趟门参数
+            {
+                if(strMlWaikuan[j].doortype == OneType.name)// 门类型 下的边框
+                {
+                    var OneWaikuan ={};
+                    OneWaikuan.name = strMlWaikuan[j].name;
+                    OneWaikuan.image = strMlWaikuan[j].name + '.jpg';
+                    // 添加默认值
+                    var def = {
+                        "updownborder": "Q1上下横",
+                        "upbordercolor": "70#象牙白",
+                        "downbordercolor": "70#象牙白",
+                        "middleborder": "Q1-3AN中横",
+                        "middleborder_color": "70#象牙白",
+                        "updownrail": "上居中滑轮下静音",
+                        "uprailcolor": "70#象牙白",
+                        "downrailcolor": "70#象牙白"
+                    }
+                    def.updownrail = strMlWaikuan[j].track; // 上下轨默认类型
+                    def.updownborder = strMlWaikuan[j].udbox; // 上下横默认类型
+                    def.middleborder = strMlWaikuan[j].hbox; // 中横默认类型
+
+                    //添加颜色
+                    OneWaikuan.color =  AddColor2(strMlWaikuan[j].name);
+
+                    OneWaikuan.groupname = strMlWaikuan[j].groupname == "" ? "未分组" : strMlWaikuan[j].groupname;
+                    // 没种边框类型里要添加的数据 上下横， 导轨 中横
+                    var AllDaoGui=[];
+                    var UDownborder ={ //上下横默认颜色
+                        "upbordercolor": "",
+                        "downbordercolor": "",
+                        "bset" : false
+                    };
+                    var UDowntrack ={ //上下轨默认颜色
+                        "uprailcolor": "",
+                        "downrailcolor": "",
+                        "bset": false
+                    };
+                    var HDbox ={ //中横默认颜色
+                        "middleborder_color": "",
+                        "bset" : false
+                    };
+                    for(var k = 0; k< strMlDaoGui.length; k++) // 导轨
+                    {
+                        var str = strMlDaoGui[k].边框类型;
+//                        var patt1;
+                        var result;
+						
+						//若str为undefined则跳过当前循环
+                        if(str !== undefined){
+                              //将str转换为数组
+							shortTimeSave = str.split(',');
+							result = (inArray(escapeString(OneWaikuan.name),shortTimeSave) > -1) ? true : false;
+
+//							itemName = escapeString(OneWaikuan.name) + ',';
+//							patt1 = new RegExp(itemName);
+//							result = patt1.test(str);
+
+							if(result){
+								var OneDaoGui ={};
+								OneDaoGui.name = strMlDaoGui[k].name;
+								OneDaoGui.image = strMlDaoGui[k].name + '.jpg';
+								// 导轨要添加上轨颜色  下轨颜色
+								OneDaoGui.uprailcolor = AddColor("上轨",strMlDaoGui[k].upname);
+								OneDaoGui.downrailcolor = AddColor("下轨",strMlDaoGui[k].dnname); // 下轨颜色
+
+								if(!UDowntrack.bset){
+									UDowntrack.bset = true;
+									var as  = OneDaoGui.uprailcolor.length> 0 ? OneDaoGui.uprailcolor[0] :"";
+									UDowntrack.uprailcolor = as.name;
+									var asb  = OneDaoGui.downrailcolor.length> 0 ? OneDaoGui.downrailcolor[0] :"";
+									UDowntrack.downrailcolor = asb.name;
+								}
+								AllDaoGui.push(OneDaoGui);
+							}
+                        }
+                      
+                    }
+                    OneWaikuan.updownrail = AllDaoGui;
+                    var AllZhongheng=[];
+                    for(var k = 0; k< strMlZhongHeng.length; k++) //中横
+                    {
+                        var str = strMlZhongHeng[k].边框类型;
+//                        var patt1;
+                        var result;
+
+						//若str为undefined则跳过当前循环
+                        if(str !== undefined){
+                            //将str转换为数组
+							shortTimeSave = str.split(',');
+							result = (inArray(escapeString(OneWaikuan.name),shortTimeSave) > -1) ? true : false;
+	
+//							 itemName = escapeString(OneWaikuan.name) + ',';
+//							 patt1 = new RegExp(itemName);
+//							 result = patt1.test(str);
+	
+							if(result){
+								var OneZhongheng ={};
+								OneZhongheng.name = strMlZhongHeng[k].name;
+								OneZhongheng.image = strMlZhongHeng[k].name + '.jpg';
+								OneZhongheng.color = AddColor("中横框",OneZhongheng.name);
+								OneZhongheng.holepos = strMlZhongHeng[k].holepos;
+								OneZhongheng.holenum = strMlZhongHeng[k].holenum;
+								OneZhongheng.holecap = strMlZhongHeng[k].holecap;
+								if(!HDbox.bset){
+									HDbox.bset = true;
+									var ass = OneZhongheng.color.length> 0 ? OneZhongheng.color[0] :"";
+									HDbox.middleborder_color = ass.name;
+								}
+								AllZhongheng.push(OneZhongheng);
+							}
+                        }
+                    }
+                    OneWaikuan.middleborder = AllZhongheng;
+                    var AllMlMenShxiaHeng=[];
+                    for(var k = 0; k< strMlMenShxiaHeng.length; k++) //上下横
+                    {
+                        var str = strMlMenShxiaHeng[k].边框类型;
+//                        var patt1;
+                        var result;
+
+						//若str为undefined则跳过当前循环
+                        if(str !== undefined){
+                            //将str转换为数组
+							shortTimeSave = str.split(',');
+							result = (inArray(escapeString(OneWaikuan.name),shortTimeSave) > -1) ? true : false;
+
+//							itemName = escapeString(OneWaikuan.name) + ',';
+//							patt1 = new RegExp(itemName);
+//							result = patt1.test(str);
+
+							if(result){
+								var OneSxheng ={};
+								OneSxheng.name = strMlMenShxiaHeng[k].name;
+								OneSxheng.image = strMlMenShxiaHeng[k].name + '.jpg';
+								OneSxheng.upbordercolor = AddColor("上横框",strMlMenShxiaHeng[k].upname);
+								OneSxheng.downbordercolor = AddColor("下横框",strMlMenShxiaHeng[k].dnname);
+								OneSxheng.upholepos = strMlMenShxiaHeng[k].upholepos;
+								OneSxheng.downholepos = strMlMenShxiaHeng[k].downholepos;
+
+								if(!UDownborder.bset){
+									UDownborder.bset = true;
+									var as  = OneSxheng.upbordercolor.length> 0 ? OneSxheng.upbordercolor[0] :"";
+									UDownborder.upbordercolor = as.name;
+									var asb = OneSxheng.upbordercolor.length> 0 ? OneSxheng.upbordercolor[0] :"";
+									UDownborder.downbordercolor = asb.name;
+								}
+	
+		                       AllMlMenShxiaHeng.push(OneSxheng);
+			                }
+                        }
+                    }
+                    OneWaikuan.updownborder = AllMlMenShxiaHeng;
+                    // 添加门芯
+                    var AllMlMenXin=AddMenXin(strMlWaikuan[j].name);
+
+                    OneWaikuan.shuttermodel = AllMlMenXin;
+
+                    // s上下轨
+                    def.uprailcolor = UDowntrack.uprailcolor;
+                    def.downrailcolor = UDowntrack.downrailcolor;
+                    // 上下横
+                    def.upbordercolor = UDownborder.upbordercolor;
+                    def.downbordercolor = UDownborder.downbordercolor;
+                    // 中横
+                    def.middleborder_color = HDbox.middleborder_color;
+
+                    OneWaikuan.defaultattr = def; // 添加默认配置
+
+                    Waikuan.push(OneWaikuan);
+                }
+            }
+
+
+
+            OneType.frametype = Waikuan;
+
+            // 添加配件
+            var Wjpeijian = [];
+            for(var item in strMlPeijian)
+            {
+                var fitting ={
+                    name:strMlPeijian[item].name,
+                    amount:strMlPeijian[item].数量,
+                    image:strMlPeijian[item].name + '.jpg'
+                };
+                Wjpeijian.push(fitting);
+            }
+            OneType.fitting = Wjpeijian;
+            Type.push(OneType);
+        }
+        AllJSonData.gatetype = Type;
+        var ALLstrdata = JSON.stringify(AllJSonData);
+        qdutils.WriteStringToFile(slidingConfigFilePath+'Sliding.txt', ALLstrdata);
+        alert('导出成功');
+    }
+    function AddMenXin(type)
+    {
+        var strMlMenBan = ReadMenBan();
+        var AllMenXin=[];
+        for(var i = 0 ;i < strMlMenBan.length; i++)
+        {
+            if(strMlMenBan[i].bktype == type)
+            {
+                var OneMenBan ={};
+                OneMenBan.name = strMlMenBan[i].name;
+                OneMenBan.grain = strMlMenBan[i].direct;
+                OneMenBan.image = strMlMenBan[i].name + '.jpg';
+                OneMenBan.color = AddColor("门板",OneMenBan.name);
+                OneMenBan.color2 = AddColor3("门板",OneMenBan.name);
+                OneMenBan.type = (strMlMenBan[i].iswHole == 'TRUE') ? "1":"0";
+                OneMenBan.groupname = strMlMenBan[i].groupname == "" ? "未分组" : strMlMenBan[i].groupname;
+                OneMenBan.height = strMlMenBan[i].Eheight;//'1|700|1400|2100-2|0|2440-3|0|2440|100-4|1/2|1/3|1/4';
+                AllMenXin.push(OneMenBan);
+            }
+        }
+        return AllMenXin;
+    }
+    function AddColor(type, name)
+    {
+        var strMlColor = ReadColor();
+        var allcolor =[];
+        for(var i = 0;i< strMlColor.length; i++ )
+        {
+            if(type == strMlColor[i].myclass && name == strMlColor[i].mat)// 类型
+            {
+                var OneColor = {};
+                OneColor.name = strMlColor[i].color;
+                OneColor.image = strMlColor[i].color + '.jpg';
+                if(type == '门板')
+                {
+                    OneColor.height = strMlColor[i].Eheight;//'1|700|1400|2100-2|0|2440-3|0|2440|100-4|1/2|1/3|1/4';
+                }
+                allcolor.push(OneColor);
+            }
+        }
+        return allcolor;
+    }
+    function AddColor3(type, name)
+    {
+        var strMlColor = ReadColor();
+        var allcolor =[];
+        for(var i = 0;i< strMlColor.length; i++ )
+        {
+            if(type == strMlColor[i].myclass && name == strMlColor[i].mat)// 类型
+            {
+                if(strMlColor[i].color2 != '') {
+                    var OneColor = {};
+                    OneColor.name = strMlColor[i].color2;
+                    OneColor.image = strMlColor[i].color2 + '.jpg';
+                    if(type == '门板')
+                    {
+                        OneColor.height = strMlColor[i].Eheight;//'1|700|1400|2100-2|0|2440-3|0|2440|100-4|1/2|1/3|1/4';
+                    }
+                    allcolor.push(OneColor);
+                }
+            }
+        }
+        return allcolor;
+    }
+    function AddColor2(name)
+    {
+        var strMlColor2 = ReadColor2();
+        var allcolor =[];
+        for(var i = 0;i< strMlColor2.length; i++ )
+        {
+            if(name == strMlColor2[i].bktype)// 类型
+            {
+                var OneColor = {};
+                OneColor.name = strMlColor2[i].color;
+                OneColor.image = strMlColor2[i].color + '.jpg';
+                allcolor.push(OneColor);
+            }
+        }
+        return allcolor;
+    }
+    function ReadMenLeix() // 读取门类型
+    {
+        var data = qdutils.ReadStringFromFile(path + '门类型.cfg');
+        return JSON.parse(data);
+    }
+    function ReaderMenWaikuan()// 读取门边框
+    {
+        var data = qdutils.ReadStringFromFile(path + '趟门参数.cfg');
+        return JSON.parse(data);
+    }
+    function ReadMenSanshu() // 门扇数
+    {
+        var data = qdutils.ReadStringFromFile(path + '单门数量类型.cfg');
+        return JSON.parse(data);
+    }
+    function ReadMenSXHeng() // 上下横
+    {
+        var data = qdutils.ReadStringFromFile(path + '上下横框参数.cfg');
+        return JSON.parse(data);
+    }
+    function ReadSxDaoGui()// 上下导轨
+    {
+        var data = qdutils.ReadStringFromFile(path + '上下轨参数.cfg');
+        return JSON.parse(data);
+        return JSON.parse(qdutils.ReadStringFromFile(path + '上下轨参数.cfg'));
+    }
+    function ReadZhongHeng()// 中横
+    {
+        var data = qdutils.ReadStringFromFile(path + '中横框参数.cfg');
+        return JSON.parse(data);
+        return JSON.parse(qdutils.ReadStringFromFile(path + '中横框参数.cfg'));
+    }
+    function ReadMenBan()// 读取门板型号（门芯）
+    {
+        var data = qdutils.ReadStringFromFile(path + '门板类型.cfg');
+        return JSON.parse(data);
+        return JSON.parse(qdutils.ReadStringFromFile(path + '门板类型.cfg'));
+    }
+    function ReadPeijian()// 读取配件
+    {
+        var data = qdutils.ReadStringFromFile(path + '五金配件.cfg');
+        return JSON.parse(data);
+        return JSON.parse(qdutils.ReadStringFromFile(path + '五金配件.cfg'));
+    }
+    function ReadColor()// 读取颜色
+    {
+        var data = qdutils.ReadStringFromFile(path + '颜色分类.cfg');
+        return JSON.parse(data);
+        return JSON.parse(qdutils.ReadStringFromFile(path + '颜色分类.cfg'));
+    }
+    function ReadColor2()// 读取颜色 // 边框颜色
+    {
+        var data = qdutils.ReadStringFromFile(path + '颜色分类2.cfg');
+        return JSON.parse(data);
+        return JSON.parse(qdutils.ReadStringFromFile(path + '颜色分类2.cfg'));
+    }
+</script>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Home</title>
+        <!--<link rel="stylesheet" type="text/css" href="css/APIndex.css">-->
+        <script type="text/javascript" src="http://127.0.0.1:10/QdCloud/assets/js/jquery.min.js"></script>
+        <style>
+            *{
+                padding: 0;
+                margin: 0;
+            }
+            html,body{
+                width: 100%;
+                height: 100%;
+            }
+            html,body,input,p,td,th,button{
+                font-family: 微软雅黑;
+            }
+            ul,li,a,i,dl,dt,dd {
+                list-style: none;
+                text-decoration: none;
+                font-style: normal;
+            }
+            .item-list{
+                min-height: 100%;
+                width: 100%;
+                height: auto;
+                background-color: #4A4A4A;
+            }
+            .pageLinkItem{
+                width: 100%;
+                height: 40px;
+                border-bottom: 1px solid #ffffff;
+                cursor: pointer;
+
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+
+                display: flex;
+                display: -webkit-flex;
+
+                align-items: center;
+                -webkit-align-items: center;
+            }
+            .pageLinkItem a{
+                margin-left: 10px;
+                color:#ffffff;
+            }
+            .doorTypeItem {
+                width: 100%;
+                height: 40px;
+                color: #ffffff;
+                border-bottom: 1px solid #ffffff;
+                cursor: pointer;
+
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+
+                display: flex;
+                display: -webkit-flex;
+
+                flex-direction: row;
+                -webkit-flex-direction: row;
+
+                justify-content: space-between;
+                -webkit-justify-content: space-between;
+
+                align-items: center;
+                -webkit-align-items: center;
+            }
+            .doorTypeListDiv{
+                width: 100%;
+                height: auto;
+                background-color: #6a6a6a;
+            }
+            .doorTypeName{
+                margin-left: 10px;
+            }
+            .zoomSign{
+                font-size: 20px;
+                font-weight: bold;
+                margin-right: 10px;
+            }
+            ._displayNone{
+                display: None;
+            }
+        </style>
+    </head>
+    <body id="main-left">
+        <ul class="item-list" id="left-item">
+            <li class="pageLinkItem"><a href="DSDocument.html" target="show_1" onclick='aEvent(this)'>主页</a></li>
+            <li class="doorTypeItem">
+                <p class="doorTypeName">趟门</p>
+                <p class="zoomSign">+</p>
+            </li>
+            <li class="doorTypeListDiv _displayNone">
+                <ul class="doorTypeList">
+                	<li class="pageLinkItem">
+                        <a href="./Sliding/门类型.html" target="show_1" onclick='aEvent(this)'>门类型</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Sliding/单门数量类型.html" target="show_1" onclick='aEvent(this)'>单门数量类型</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Sliding/趟门参数.html" target="show_1" onclick='aEvent(this)'>趟门参数</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Sliding/竖框参数.html" target="show_1" onclick='aEvent(this)'>竖框参数</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Sliding/中横框参数.html" target="show_1" onclick='aEvent(this)'>中横框参数</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Sliding/上下横框参数.html" target="show_1" onclick='aEvent(this)'>上下横框参数</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Sliding/上下轨参数.html" target="show_1" onclick='aEvent(this)'>上下轨参数</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Sliding/门板类型.html" target="show_1" onclick='aEvent(this)'>门板类型</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Sliding/五金配件.html" target="show_1" onclick='aEvent(this)'>五金配件</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Sliding/颜色分类.html" target="show_1" onclick='aEvent(this)'>颜色分类</a>
+                    </li>
+                    <!--新增-->
+                    <li class="pageLinkItem">
+                        <a href="./Sliding/百叶板计算公式.html" target="show_1" onclick='aEvent(this)'>百叶板计算公式</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Sliding/数据输出分组.html" target="show_1" onclick='aEvent(this)'>数据输出分组</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Sliding/五金配件分类.html" target="show_1" onclick='aEvent(this)'>五金配件分类</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Sliding/系统变量.html" target="show_1" onclick='aEvent(this)'>系统变量</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Sliding/颜色分类2.html" target="show_1" onclick='aEvent(this)'>颜色分类2</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Sliding/门板附加物料.html" target="show_1" onclick='aEvent(this)'>门板附加物料</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="doorTypeItem">
+                <p class="doorTypeName">掩门</p>
+                <p class="zoomSign">+</p>
+            </li>
+            <li class="doorTypeListDiv _displayNone">
+                <ul class="doorTypeList">
+                    <li class="pageLinkItem">
+                        <a href="./Door/门类型.html" target="show_1" onclick='aEvent(this)'>门类型</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Door/掩门参数.html" target="show_1" onclick='aEvent(this)'>掩门参数</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Door/单门数量类型.html" target="show_1" onclick='aEvent(this)'>单门数量类型</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Door/拉手.html" target="show_1" onclick='aEvent(this)'>拉手</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Door/中横框参数.html" target="show_1" onclick='aEvent(this)'>中横框参数</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Door/门芯类型.html" target="show_1" onclick='aEvent(this)'>门芯类型</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Door/颜色分类.html" target="show_1" onclick='aEvent(this)'>颜色分类</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Door/配件.html" target="show_1" onclick='aEvent(this)'>配件</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Door/配件分类.html" target="show_1" onclick='aEvent(this)'>配件分类</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Door/百叶板配置.html" target="show_1" onclick='aEvent(this)'>百叶板配置</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Door/系统变量.html" target="show_1" onclick='aEvent(this)'>系统变量</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Door/门铰.html" target="show_1" onclick='aEvent(this)'>门铰</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Door/门铰分类.html" target="show_1" onclick='aEvent(this)'>门铰分类</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Door/颜色分类2.html" target="show_1" onclick='aEvent(this)'>颜色分类2</a>
+                    </li>
+                    <li class="pageLinkItem">
+                        <a href="./Door/门芯附加物料.html" target="show_1" onclick='aEvent(this)'>门芯附加物料</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <script type="text/javascript">
+//            parent.corActive();
+            mouseDown_list();
+            /**
+             * 新增函数
+             * 列表点击事件
+             */
+            function mouseDown_list() {
+                var listObj = document.getElementById('left-item');
+                listObj.onmousedown = function (event) {
+                    mouseDownEvent(event);
+                }
+            }
+            /**
+             * 新增函数
+             * 点击事件
+             */
+            function mouseDownEvent(event) {
+                var nowActObj = event.target;
+                var nowLiObj;
+                var nowAObj;
+                var nowListObj;
+                if(nowActObj && event.button == 0){
+                    if(nowActObj.tagName.toLowerCase() == 'a'){
+                    	initAObj();
+                        return;
+                    }
+                    nowLiObj = (nowActObj.tagName.toLowerCase() == 'p') ? nowActObj.parentNode : nowActObj;
+                    if(nowLiObj.className.indexOf('doorTypeItem') > -1){
+                        nowListObj = nowLiObj.nextElementSibling;
+                        if(nowListObj.className.indexOf('_displayNone') > -1){
+                            initList();
+                            nowListObj.classList.remove('_displayNone');
+                            nowLiObj.lastElementChild.innerText = '-';
+                        }else {
+                            nowListObj.classList.add('_displayNone');
+                            nowLiObj.lastElementChild.innerText = '+';
+                        }
+                    }else {
+                        initAObj();
+                        nowAObj = nowLiObj.firstElementChild;
+                        nowAObj.click();
+                    }
+                }
+            }
+            /**
+             * 新增函数
+             * 列表展开初始化
+             */
+            function initList() {
+                var listObj = document.getElementById('left-item');
+                var listOBjArr = listObj.getElementsByClassName('doorTypeListDiv');
+                for(var index in listOBjArr){
+                    if(!isNaN(index) && listOBjArr[index].className.indexOf('_displayNone') < 0){
+                        listOBjArr[index].classList.add('_displayNone');
+                        listOBjArr[index].previousElementSibling.lastElementChild.innerText = '+';
+                        break;
+                    }
+                }
+            }
+            /**
+             * 新增列表
+             * a标签初始化
+             */
+            function initAObj() {
+                var listObj = document.getElementById('left-item');
+                var aObjArr = listObj.getElementsByTagName('a');
+                for(var index in aObjArr){
+                    if(!isNaN(index) && aObjArr[index].style.color == 'rgb(67, 184, 30)'){
+                        aObjArr[index].style.color = 'rgb(255,255,255)';
+                    }
+                }
+                listObj = null;
+                aObjArr = null;
+            }
+            /**
+            * 新增函数
+            * a标签事件
+            */
+            function aEvent (_this) {
+                _this.style.color = 'rgb(67, 184, 30)';
+            }
+        </script>
+    </body>
+</html>

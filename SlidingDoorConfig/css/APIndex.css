@@ -1,0 +1,51 @@
+*{
+	margin: 0;
+	padding: 0;
+	font-family: "微软雅黑";
+}
+ul,li,a,i,dl,dt,dd {
+	margin:0;
+	padding: 0;
+	list-style: none;
+	text-decoration: none;
+	font-style: normal;
+}
+.objStyle {
+	position: absolute;
+}
+/*APIsir侧边栏样式*/
+#main-left {
+	background-color: #4A4A4A;
+	color: white;
+}
+.item-list {
+	margin: auto;
+	width: 85%;
+}
+.item-list li {
+	width: 100%;
+	text-align: left;
+	margin-top: 10px;
+}
+.item-list li a{
+	color: white;
+}
+/*APIDocument主页样式*/
+.index-container {
+	width: 100%;
+	text-align: center;
+}
+.index-title {
+	padding: 15px;
+	background-color: #2F5843;
+	color: white;
+}
+.browserPic {
+	padding: 100px;	
+}
+/*.state {
+	position: absolute;
+	right: 100px;
+	bottom: 300px;
+	text-align: right;
+}*/

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>百叶板计算公式</title>
+    <link rel="stylesheet" href="./css/qd_table.min.css">
+    <script src="./js/qd_table.min.js"></script>
+    <script src='./js/contextMenu.min.js'></script>
+	<object id="qdutils" type="application/plugin-QdUtils.dll" style="width:0;height:0; position:absolute; top:-100px;"></object>
+</head>
+<body>
+    <div style="overflow: auto;width: 100%;height: 100%"><table id="table1"></table></div>
+</body>
+
+<script>
+	var path = qdutils.GetQuickDrawPath () + 'QdCloud\\Sliding\\趟门配置表\\';
+	var name_path = path + '百叶板计算公式.cfg';
+	var data = qdutils.ReadStringFromFile(name_path);
+	var dataSource = (data == '') ? [] : JSON.parse(data);
+    dataSource.forEach(function(data){
+        if(data.paneltype === undefined) data.paneltype = '';
+        if(data.height === undefined) data.height = '0';
+        if(data.width === undefined) data.width = '0';
+        if(data.widthcap === undefined) data.widthcap = '0';
+        if(data.heightcap === undefined) data.heightcap = '0';
+        if(data.minwidth === undefined) data.minwidth = '0';
+        if(data.minheight === undefined) data.minheight = '0';
+        if(data.size === undefined) data.size = '';
+    })
+    if(dataSource.length == 0) {
+        var obj = {
+            paneltype:'',
+            height:"0",
+            width:'0',
+            widthcap:'0',
+            heightcap:'0',
+            minwidth:'0',
+            minheight:'0',
+            size:''
+        }
+        dataSource.push(obj);
+    }
+    var testData = {
+    	rewriteTableTitle:{
+            dataSource:{
+                paneltype:'百叶板类型',
+                height:'单条高度',
+                width:'单条宽度',
+                heightcap:'高度缝隙',
+                widthcap:'宽度缝隙',
+                minheight:'余料最小高度',
+                minwidth:'余料最小宽度',
+                size:'长度规格',
+            }
+        },
+		showColumn:{
+            attrNameArr:['paneltype','height','width','heightcap','widthcap','minheight','minwidth','size']
+        },
+        setTableWidth:{
+            tableWidth:null,
+            isEqual:true
+        },
+        setTableLineHeight:{
+            lineHeight:'30px'
+        },
+        buttonRender:{
+          isCleanAll:false,
+          htmlStr:['<button style="background-color: #47a447;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="dataSave()">保存</button>','<button style="background-color: #ed9c28;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="javascript:location.reload();">取消</button>']
+        },
+        setEditColumn:{
+            editNameArr:'all'
+        },
+        setPartRows:{
+            partRows:10,
+            isPaging:true
+        },
+        setColumnOrder:{
+            columnOrder:['paneltype','height','width','heightcap','widthcap','minheight','minwidth','size']
+        },
+    };
+   
+    var test = new qd_Table();
+    test.setData('table1',dataSource,testData);
+    function dataSave() {
+        var newDataSource = [];
+        dataSource.forEach(function(data){
+            if(data.paneltype!=''){
+                if(data.height =='') data.height = '0';
+                if(data.width =='') data.width = '0';
+                if(data.widthcap =='') data.widthcap = '0';
+                if(data.heightcap =='') data.heightcap = '0';
+                if(data.minwidth =='') data.minwidth = '0';
+                if(data.minheight =='') data.minheight = '0';
+                if(data.size =='') data.size = '0';
+                newDataSource.push(data);
+            }
+        })
+        dataStr = JSON.stringify(newDataSource);
+        qdutils.WriteStringToFile(name_path,dataStr);
+        alert('保存成功');
+    }
+    var opt = {
+        tableId: 'table1',//table的id
+        selectClass: '_qd_tableContentDiv',
+        bgClass: '_global_trSelectBgColor',
+        menuId: 'menu',//menu的id
+        oldDataSource: dataSource
+    };
+    var rightclick = new RightClickText();
+    rightclick._initial(opt);
+    document.onmousedown = function(ev){
+        if(ev.button == 0) {
+            menu.style.display = 'none';
+        }
+    }
+</script>
+</html>

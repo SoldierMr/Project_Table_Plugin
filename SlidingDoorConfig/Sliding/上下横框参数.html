@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/qd_table.min.css">
+    <script src="./js/qd_table.min.js"></script>
+    <script src='./js/contextMenu.min.js'></script>
+</head>
+<body>
+    <object id="qdutils" type="application/plugin-QdUtils.dll" style="width:0;height:0; position:absolute; top:-100px;"></object>
+    <div style="overflow: auto;width: 100%;height: 100%"><table id="table1"></table></div>
+</body>
+
+<script>
+	var path = qdutils.GetQuickDrawPath () + 'QdCloud\\Sliding\\趟门配置表\\';
+	var name_path = path + '上下横框参数.cfg';
+  var borderTypeLinkDataPath = path + '趟门参数.cfg';
+	var data = qdutils.ReadStringFromFile(name_path);
+  var dataSource = (data == '') ? [] : JSON.parse(data);
+  var borderTypeLinkDataSource = JSON.parse(qdutils.ReadStringFromFile(borderTypeLinkDataPath));
+  var borderTypeLinkData = [];
+	dataSource.forEach(function (data) {
+        if(data.name === undefined) data.name = '';
+        if(data.upboxheight === undefined) data.upboxheight = '0';
+        if(data.upboxdepth === undefined) data.upboxdepth = '0';
+        if(data.upboxthick === undefined) data.upboxthick = '0';
+        if(data.downboxheight === undefined) data.downboxheight = '0';
+        if(data.downboxdepth === undefined) data.downboxdepth = '0';
+        if(data.downboxthick === undefined) data.downboxthick = '0';
+        if(data.wlupcode === undefined) data.wlupcode = '';
+        if(data.upname === undefined) data.upname = '';
+        if(data.wjname1 === undefined) data.wjname1 = '';
+        if(data.upholepos === undefined) data.upholepos = '';
+        if(data.upsize === undefined) data.upsize = '';
+        if(data.upmemo === undefined) data.upmemo = '';
+        if(data.upmodel === undefined) data.upmodel = '';
+        if(data.upbdfile === undefined) data.upbdfile = '';
+        if(data['边框类型'] === undefined) data['边框类型'] = '';
+        if(data['边框类型']!= undefined && data.hasOwnProperty('边框类型')) {
+            if(data['边框类型'].slice(-1) == ',') {
+                data['边框类型'] = data['边框类型'].slice(0,-1);
+            }
+        }
+        if(data.wldncode === undefined) data.wldncode = '';
+        if(data.dnname === undefined) data.dnname = '';
+        if(data.wjname2 === undefined) data.wjname2 = '';
+        if(data.downholepos === undefined) data.downholepos = '';
+        if(data.downsize === undefined) data.downsize = '';
+        if(data.dnmemo === undefined) data.dnmemo = '';
+        if(data.dnmodel === undefined) data.dnmodel = '';
+        if(data.dnbdfile === undefined) data.dnbdfile = '';
+   	});
+  if(dataSource.length == 0) {
+    var objec = {
+      id:'',
+      name:'',
+      upboxheight:'',
+      upboxdepth:'',
+      upboxthick:'',
+      wlupcode:'',
+      upname:'',
+      wjname1:'',
+      upholepos:'',
+      upsize:'',
+      upmodel:'',
+      upmemo:'',
+      upbdfile:'',
+      边框类型:'',
+      downboxheight:'',
+      downboxdepth:'',
+      downboxthick:'',
+      wldncode:'',
+      dnname:'',
+      wjname2:'',
+      downholepos:'',
+      downsize:'',
+      dnmodel:'',
+      dnmemo:'',
+      dnbdfile:''
+    };
+    dataSource.push(objec);
+  }
+  var wjTypePath=path + '五金配件分类.cfg';
+	var wjTypeDataSource = JSON.parse(qdutils.ReadStringFromFile(wjTypePath));
+  // console.log(wjTypeDataSource)
+	var wjTypeLinkData=[];
+	wjTypeDataSource.forEach(function (linkData) {
+	    if(isInArray(linkData.name,wjTypeLinkData) < 0) {
+	        wjTypeLinkData.push(linkData.name);
+	    }
+	});
+  console.log(wjTypeLinkData)
+  borderTypeLinkDataSource.forEach(function (linkData) {
+    if(isInArray(linkData.name,borderTypeLinkData) < 0) {
+      borderTypeLinkData.push(linkData.name);
+    }
+  });
+    var testData = {
+        rewriteTableTitle:{
+            dataSource:{
+              name:'名称',
+              边框类型:'边框类型',
+              upboxheight:'上横框高度',
+          		upboxdepth:'上横框深度',
+          		upboxthick:'上横框壁厚',
+          		wlupcode:'上横框编码',
+          		upname:'上横框名称',
+          		wjname1:'上横框关联五金',
+          		upholepos:'上横框打孔位偏移',
+          		upsize:'上横框长度规格',
+          		upmodel:'上横框图形',
+          		upmemo:'上横框备注',
+          		upbdfile:'上横框BD文件',
+          		downboxheight:'下横框高度',
+          		downboxdepth:'下横框深度',
+          		downboxthick:'下横框壁厚',
+          		wldncode:'下横框编码',
+          		dnname:'下横框名称',
+          		wjname2:'下横框关联五金',
+          		downholepos:'下横框打孔位偏移',
+          		downsize:'下横框长度规格',
+          		dnmodel:'下横框图形',
+          		dnmemo:'下横框备注',
+          		dnbdfile:'下横框BD文件'
+            },
+            diyTitleData:[
+              {
+                name:'',
+                children:[
+                  {
+                    name:'名称',
+                    attrName:'name',
+                    width:100,
+                  },
+                  {
+                    name:'边框类型',
+                    attrName:'边框类型',
+                    width:100,
+                  }
+                ]
+              },
+              {
+                name:'上横框',
+                children:[
+                  {
+                    name:'上横框高度',
+                    attrName:'upboxheight',
+                    width:100,
+                  },
+                  {
+                    name:'上横框深度',
+                    attrName:'upboxdepth',
+                    width:100,
+                  },
+                  {
+                    name:'上横框壁厚',
+                    attrName:'upboxthick',
+                    width:100,
+                  },
+                  {
+                    name:'上横框编码',
+                    attrName:'wlupcode',
+                    width:100,
+                  },
+                  {
+                    name:'上横框名称',
+                    attrName:'upname',
+                    width:100,
+                  },
+                  {
+                    name:'上横框关联五金',
+                    attrName:'wjname1',
+                    width:100,
+                  },
+                  {
+                    name:'上横框打孔位偏移',
+                    attrName:'upholepos',
+                    width:100,
+                  },
+                  {
+                    name:'上横框长度规格',
+                    attrName:'upsize',
+                    width:100,
+                  },
+                  {
+                    name:'上横框图形',
+                    attrName:'upmodel',
+                    width:100,
+                  },
+                  {
+                    name:'上横框备注',
+                    attrName:'upmemo',
+                    width:100,
+                  },
+                  {
+                    name:'上横框BD文件',
+                    attrName:'upbdfile',
+                    width:100,
+                  },
+                ]
+              },
+              {
+                name:'下横框',
+                children:[
+                  {
+                    name:'下横框高度',
+                    attrName:'downboxheight',
+                    width:100,
+                  },
+                  {
+                    name:'下横框深度',
+                    attrName:'downboxdepth',
+                    width:100,
+                  },
+                  {
+                    name:'下横框壁厚',
+                    attrName:'downboxthick',
+                    width:100,
+                  },
+                  {
+                    name:'下横框编码',
+                    attrName:'wldncode',
+                    width:100,
+                  },
+                  {
+                    name:'下横框名称',
+                    attrName:'dnname',
+                    width:100,
+                  },
+                  {
+                    name:'下横框关联五金',
+                    attrName:'wjname2',
+                    width:100,
+                  },
+                  {
+                    name:'下横框打孔位偏移',
+                    attrName:'downholepos',
+                    width:100,
+                  },
+                  {
+                    name:'下横框长度规格',
+                    attrName:'downsize',
+                    width:100,
+                  },
+                  {
+                    name:'下横框图形',
+                    attrName:'dnmodel',
+                    width:100,
+                  },
+                  {
+                    name:'下横框备注',
+                    attrName:'dnmemo',
+                    width:100,
+                  },
+                  {
+                    name:'下横框BD文件',
+                    attrName:'dnbdfile',
+                    
+                  },
+                ]
+              },
+            ]
+        },
+        showColumn:{
+            attrNameArr:['name','边框类型','upboxheight','upboxdepth','upboxthick','wlupcode','upname','wjname1','upholepos','upsize','upmodel','upmemo','upbdfile','downboxheight','downboxdepth','downboxthick','wldncode','dnname','wjname2','downholepos','downsize','dnmodel','dnmemo','dnbdfile']
+        },
+        setColumnOrder:{
+            columnOrder:['name','边框类型','upboxheight','upboxdepth','upboxthick','wlupcode','upname','wjname1','upholepos','upsize','upmodel','upmemo','upbdfile','downboxheight','downboxdepth','downboxthick','wldncode','dnname','wjname2','downholepos','downsize','dnmodel','dnmemo','dnbdfile']
+        },
+        setTableWidth:{
+            tableWidth:2600,
+            isEqual:true
+        },
+        setTableLineHeight:{
+            lineHeight:'30px'
+        },
+        writeLinkData:[
+	        {
+	            attrName:'wjname1',
+	            dataSource:wjTypeLinkData,
+	            isMoreSelect:false
+	        },
+	        {
+	            attrName:'wjname2',
+	            dataSource:wjTypeLinkData,
+	            isMoreSelect:false
+        	},
+          {
+              attrName:'边框类型',
+              dataSource:borderTypeLinkData,
+              isMoreSelect:true
+          }
+        ],
+        setEditColumn:{
+            editNameArr:['name','边框类型','upboxheight','upboxdepth','upboxthick','wlupcode','upname','wjname1','upholepos','upsize','upmodel','upmemo','downboxheight','downboxdepth','downboxthick','wldncode','dnname','wjname2','downholepos','downsize','dnmodel','dnmemo']
+        },
+        setPartRows:{
+            partRows:10,
+            isPaging:true
+        },
+        buttonRender:{
+          isCleanAll:false,
+          htmlStr:['<button style="background-color: #47a447;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="dataSave()">保存</button>','<button style="background-color: #ed9c28;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="javascript:location.reload();">取消</button>']
+        }
+    };
+    var test = new qd_Table();
+    test.setData('table1',dataSource,testData);
+    function dataSave() {
+      var newDataSource = [];
+      dataSource.forEach(function(data){
+        if(data.name!=''){
+          if(data.upboxheight =='') data.upboxheight = '0';
+          if(data.upboxdepth =='') data.upboxdepth = '0';
+          if(data.upboxthick =='') data.upboxthick = '0';
+          if(data.downboxheight =='') data.downboxheight = '0';
+          if(data.downboxdepth =='') data.downboxdepth = '0';
+          if(data.downboxthick =='') data.downboxthick = '0';
+          // if(data['边框类型'].slice(-1) != ',' && data['边框类型'] != ''){
+          //     data['边框类型'] += ',';
+          // }
+          newDataSource.push(data);
+        }
+      })
+      dataStr = JSON.stringify(newDataSource);
+      qdutils.WriteStringToFile(name_path,dataStr);
+      alert('保存成功');
+    }
+    var opt = {
+        tableId: 'table1',//table的id
+        selectClass: '_qd_tableContentDiv',
+        bgClass: '_global_trSelectBgColor',
+        menuId: 'menu',//menu的id
+        oldDataSource: dataSource
+    };
+    var rightclick = new RightClickText();
+    rightclick._initial(opt);
+    document.onmousedown = function(ev){
+        if(ev.button == 0) {
+            menu.style.display = 'none';
+            var event = ev || window.event;
+            var target = event.target || event.srcElement;
+            if((target.cellIndex == 14 || target.cellIndex == 25) && target.parentNode.parentNode.parentNode.parentNode.className.indexOf('_qd_tableContentDiv') > -1) {
+                onfileSave(target);
+            }
+        }
+    }
+    /**
+     * 新增函数
+     * 用于判断数组是否存在某数据
+     */
+    function isInArray(itemData,arr) {
+        if(!(arr instanceof Array)){
+            console.log('isInArray的arr参数需为Array');
+            return;
+        }
+        var returnIndex = -1;
+        var index;
+        for(index in arr){
+            if(itemData == arr[index]){
+                returnIndex = index;
+                break;
+            }
+        }
+        return returnIndex;
+    }
+    function onfileSave(this_) {
+        var that = this_;
+        var that_parentText = that.textContent;
+        var thatAttrName = that.getAttribute('attrname');
+        var thatParentIndex = that.parentNode.firstElementChild.nextElementSibling.textContent - 1;
+        var filePathName  = qdutils.ShowOpenFileDialog(that_parentText, '*.bd|*.bd');
+        that.textContent = filePathName.substring(filePathName.indexOf('\\bd') + 1,filePathName.length);
+        for(var trIndex in dataSource) {
+            if(trIndex == thatParentIndex) {
+                dataSource[trIndex][thatAttrName] = that.textContent;
+            }
+        }
+    }
+</script>
+</html>

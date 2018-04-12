@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/qd_table.min.css">
+    <script src="./js/qd_table.min.js"></script>
+    <script src='./js/contextMenu.min.js'></script>
+</head>
+<body>
+    <object id="qdutils" type="application/plugin-QdUtils.dll" style="width:0;height:0; position:absolute; top:-100px;"></object>
+    <div style="overflow: auto;width: 100%;height: 100%"><table id="table1"></table></div>
+</body>
+
+<script>
+	var path = qdutils.GetQuickDrawPath () + 'QdCloud\\Door\\掩门配置表\\';
+    var hinge_path = path + '门铰.cfg';
+	var name_path = path + '门类型.cfg';
+	var data = qdutils.ReadStringFromFile(name_path);
+    var hingeData = qdutils.ReadStringFromFile(hinge_path);
+	var booleanArr = ['TRUE','FALSE'];
+    var doorType = ['','外盖','内盖'];
+    var defaultHinge = [];
+	var dataSource = (data == '') ? [] : JSON.parse(data);
+    var hingeDataSource = (hingeData == '') ? [] : JSON.parse(hingeData);
+    
+    var ob = {'id':'0','hinge1':'','hinge2':'','name':'','isframe':'FALSE','myclass':'','hinge':'','lkvalue':'','颜色':'','默认颜色':'','默认门框':'','颜色':'','depth':'','covertype':'','eb_lkvalue':'','eb_ud_lkvalue':''};
+    dataSource.forEach(function(data){
+        if(data['颜色']!= undefined && data.hasOwnProperty('颜色')) {
+            if(data['颜色'].slice(-1) == ',') {
+                data['颜色'] = data['颜色'].slice(0,-1);
+            }
+        }
+        if(data['isframe']!= undefined && data.hasOwnProperty('isframe')) {
+            if(data['isframe'] == 0) {
+                data['isframe'] = 'FALSE';
+            }else if(data['isframe']!=0 && data['isframe']!='FALSE'){
+                data['isframe'] = 'TRUE';
+            }
+        }
+        data = extend(data,ob);
+    })
+    defaultHinge = loopInp(hingeDataSource,defaultHinge);
+    console.log(dataSource)
+    if(dataSource.length == 0) {
+        var objec = {
+            id:'0',
+            name:'',
+            myclass:'',
+            hinge:'',
+            hinge1:'',
+            hinge2:'',
+            isframe:'FALSE',
+            covertype:'',
+            颜色:'',
+            默认门框:'',
+            默认颜色:'',
+            lkvalue:'FALSE',
+            depth:'',
+            eb_lkvalue:'',
+            eb_ud_lkvalue:''
+        };
+        dataSource.push(objec);
+    }
+    var testData = {
+        rewriteTableTitle:{
+            dataSource:{
+                name:'名称',
+                isframe:'是否有门框',
+                myclass:'类型',
+                颜色:'颜色',
+                默认门框:'默认门框',
+                默认颜色:'默认颜色',
+                hinge:'默认门铰',
+                lkvalue:'留空值',
+                depth:'门厚度',
+                eb_lkvalue:'内嵌门留空值',
+                eb_ud_lkvalue:'内嵌门上下留空值'
+
+            }
+        },
+		showColumn:{
+            attrNameArr:['name','isframe','myclass','颜色','默认门框','默认颜色','hinge','lkvalue','depth','eb_lkvalue','eb_ud_lkvalue']
+        },
+        setColumnOrder:{
+            columnOrder:['name','isframe','myclass','颜色','默认门框','默认颜色','hinge','lkvalue','depth','eb_lkvalue','eb_ud_lkvalue']
+        },
+        setTableLineHeight:{
+            lineHeight:'30px'
+        },
+        setEditColumn:{
+            editNameArr:'all'
+        },
+        writeLinkData:[
+        {
+            attrName:'myclass',
+            dataSource:doorType,
+            isMoreSelect:false
+        },{
+            attrName:'hinge',
+            dataSource:defaultHinge,
+            isMoreSelect:false
+        },{
+            attrName:'isframe',
+            dataSource:booleanArr,
+            isMoreSelect:false
+        }],
+		 setTableWidth:{
+            tableWidth:null,
+            isEqual:true
+        },
+        setPartRows:{
+            partRows:10,
+            isPaging:true
+        },
+        buttonRender:{
+          isCleanAll:false,
+          htmlStr:['<button style="background-color: #47a447;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="dataSave()">保存</button>','<button style="background-color: #ed9c28;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="javascript:location.reload();">取消</button>']
+        }
+    };
+    var test = new qd_Table();
+    test.setData('table1',dataSource,testData);
+    function dataSave() {
+        var newDataSource = [];
+        console.log(dataSource)
+        var dataStr;
+        dataSource.forEach(function(data){
+            if(data.name!=''){
+                if(data.eb_lkvalue == '') data.eb_lkvalue = '0';
+                if(data.depth == '') data.depth = '0';
+                if(data['isframe'] == 0) {
+                    data['isframe'] = 'FALSE';
+                }else if(data['isframe']!=0 && data['isframe']!='FALSE'){
+                    data['isframe'] = 'TRUE';
+                }
+                // if(data['颜色'] != '' && data['颜色'].slice(-1) != ','){
+                //     data['颜色'] += '';
+                // }
+                newDataSource.push(data);
+            }
+        })
+        dataStr = JSON.stringify(newDataSource);
+        qdutils.WriteStringToFile(name_path,dataStr);
+        alert('保存成功');
+    }
+    function extend(o,n) {
+        for(var key in n) if(n.hasOwnProperty(key) && !o.hasOwnProperty(key)) o[key]=n[key];
+        return o;
+    }
+    function loopInp(dataInp,dataOutp) {
+        if(!(dataInp instanceof Array) || !(dataOutp instanceof Array)) {
+            throw new Error('loopInp方法的array参数类型需为Array');
+        }
+        dataInp.forEach(function(data) {
+            if((data.name!== undefined || data.name!= '') && dataOutp.indexOf(data.name) == -1)
+                dataOutp.push(data.name);
+        })
+        return dataOutp;
+    }
+    var opt1 = {
+        tableId: 'table1',//table的id
+        selectClass: '_qd_tableContentDiv',
+        bgClass: '_global_trSelectBgColor',
+        menuId: 'menu',//menu的id
+        oldDataSource: dataSource
+    };
+    var rightclick = new RightClickText();
+    rightclick._initial(opt1);
+    document.onmousedown = function(ev){
+        if(ev.button == 0) {
+            menu.style.display = 'none';
+        }
+    }
+</script>
+</html>

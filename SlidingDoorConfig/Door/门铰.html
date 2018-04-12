@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./css/qd_table.min.css">
+     <script src="http://js.huaguangsoft.com/QdCloud/assets/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./js/qd_table.min.js"></script>
+    <script src='./js/contextMenu.min.js'></script>
+</head>
+<body>
+    <object id="qdutils" type="application/plugin-QdUtils.dll" style="width:0;height:0; position:absolute; top:-100px;"></object>
+    <div style="overflow: auto;width: 100%;height: 100%"><table id="table1"></table></div>
+</body>
+
+<script>
+	var path = qdutils.GetQuickDrawPath () + 'QdCloud\\Door\\掩门配置表\\';
+	var name_path = path + '门铰.cfg';
+    var linkDataPath = path + '五金配件分类.cfg';
+    var hingeDataPath = path + '门铰分类.cfg';
+
+	// var data = qdutils.ReadStringFromFile(name_path);
+ //    var linkDataSource = JSON.parse(qdutils.ReadStringFromFile(linkDataPath));
+ //    var hingeDataSource = JSON.parse(qdutils.ReadStringFromFile(hingeDataPath));
+    var linkData = [];
+    var hingeData = [];
+    var dataSource;
+    var instalWayArr = ['板材','型材五金','五金'];
+    var insWayArr = ['全盖','入柱','半盖','其他'];
+ //    if(data==''){
+	// 	data='[]';
+	// }
+	// dataSource = JSON.parse(data);
+    var dataSource = isFileExists(name_path);
+    var linkDataSource = isFileExists(linkDataPath);
+    var hingeDataSource = isFileExists(hingeDataPath);
+
+    dataSource.forEach(function (data) {
+        if(data.id === undefined) data.id = '0';
+        if(data.name === undefined) data.name = '';
+        if(data.wjname === undefined) data.wjname ='';
+        if(data.bomtype === undefined) data.bomtype = '';
+        if(data.安装方式 === undefined) data.安装方式 = '';
+        if(data.hingetype === undefined) data.hingetype = '';
+        if(data.memo === undefined) data.memo = '';
+    });
+    if(dataSource.length == 0) {
+        var dataObj = {
+            id:'0',
+            name:'',
+            wjname:'',
+            安装方式:'',
+            bomtype:'',
+            hingetype:'',
+            memo:''
+        }
+        dataSource.push(dataObj);
+    }
+    linkData = loopInp(linkDataSource,linkData);
+    hingeData = loopInp(hingeDataSource,hingeData);
+    var testData = {
+        writeLinkData:[
+            {
+                attrName:'wjname',
+                dataSource:linkData,
+                isMoreSelect:false
+            },{
+                attrName:'bomtype',
+                dataSource:instalWayArr,
+                isMoreSelect:false
+            },{
+                attrName:'安装方式',
+                dataSource:insWayArr,
+                isMoreSelect:false
+            },{
+                attrName:'hingetype',
+                dataSource:hingeData,
+                isMoreSelect:false
+            }
+        ],
+        rewriteTableTitle:{
+            dataSource:{
+                name:'名称',
+                wjname:'配件',
+                bomtype:'物料分类',
+                hingetype:'门铰分类',
+                安装方式:'安装方式',
+                memo:'备注'
+            },
+        },
+		showColumn:{
+            attrNameArr:['name','wjname','bomtype','hingetype','安装方式','memo']
+        },
+        setColumnOrder:{
+            columnOrder:['name','wjname','bomtype','hingetype','安装方式','memo']
+        },
+        setTableWidth:{
+            tableWidth:null,
+            isEqual:true
+        },
+        setTableLineHeight:{
+            lineHeight:'30px'
+        },
+        setEditColumn:{
+            editNameArr:'all'
+        },
+        setPartRows:{
+            partRows:10,
+            isPaging:true
+        },
+        buttonRender:{
+          isCleanAll:false,
+          htmlStr:['<button style="background-color: #47a447;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="dataSave()">保存</button>','<button style="background-color: #ed9c28;color: #ffffff;" class="_qd_funBtnSize" name="save" onclick="javascript:location.reload();">取消</button>']
+        }
+    };
+
+    var test = new qd_Table();
+    test.setData('table1',dataSource,testData);
+    function dataSave() {
+        var newDataSource = [];
+        dataSource.forEach(function(data){
+            if(data.name!=''){
+                newDataSource.push(data);
+            }
+        })
+        dataStr = JSON.stringify(newDataSource);
+        qdutils.WriteStringToFile(name_path,dataStr);
+        alert('保存成功');
+    }
+    function loopInp(dataInp,dataOutp) {
+        if(!(dataInp instanceof Array) || !(dataOutp instanceof Array)) {
+            throw new Error('loopInp方法的array参数类型需为Array');
+        }
+        dataInp.forEach(function(data) {
+            if((data.name!== undefined || data.name!= '') && dataOutp.indexOf(data.name) == -1)
+                dataOutp.push(data.name);
+        })
+        return dataOutp;
+    }
+    function extend(o,n) {
+        for(var key in n) if(n.hasOwnProperty(key) && !o.hasOwnProperty(key)) o[key]=n[key];
+        return o;
+    }
+    // 判断是否文件存在
+    function isFileExists(filePath) {
+        var result;
+        if(qdutils.FileExists(filePath)) {
+            if(qdutils.ReadStringFromFile(filePath).length < 1) {
+                result = [];
+            }else {
+                result = JSON.parse(qdutils.ReadStringFromFile(filePath));
+            }
+        }else {
+            return result = [];
+        }
+        return result;
+    }
+    var opt1 = {
+            tableId: 'table1',//table的id
+            selectClass: '_qd_tableContentDiv',
+            bgClass: '_global_trSelectBgColor',
+            menuId: 'menu',//menu的id
+            oldDataSource: dataSource
+        };
+        var rightclick = new RightClickText();
+        rightclick._initial(opt1);
+        document.onmousedown = function(ev){
+            if(ev.button == 0) {
+                menu.style.display = 'none';
+            }
+        }
+</script>
+</html>
